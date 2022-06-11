@@ -1,3 +1,5 @@
+## Josee: Telegram bot
+
 ### Commands  
 coin - Flips a coin.  
 random - Returns a random number from one to argument.  
