@@ -12,6 +12,7 @@ import requests
 import json
 import math
 import asyncio
+import atexit
 
 import telebot
 from telebot.async_telebot import AsyncTeleBot
@@ -24,16 +25,27 @@ ch = logging.StreamHandler(sys.stdout)
 formatter = logging.Formatter('[%(asctime)s] %(levelname)s - %(message)s', '%m-%d %H:%M:%S')
 ch.setFormatter(formatter)
 
-log.addHandler(ch)                                  
+log.addHandler(ch)
 
-global StartTime
-StartTime = round(time.time())
+startTime = round(time.time())
 
-global data
-with open('data.json') as f:
-  data = json.load(f)
-  f.close
+f = open('data.json', 'r')
+data = json.load(f)
+f.close()
 
+try:
+  f = open('notes.json', 'r')
+  notes = json.load(f)
+  f.close()
+except:
+  print("Something wrong with \"notes.json\"...",
+  "If you run this bot first time, ignore this message\n",
+  "But if not, try to check:",
+  "1. Existing file in the root folder of the bot.",
+  "2. Permission to read (and write) file.",
+  "3. Correct file format as json.",
+  sep = "\n")
+  notes = {}
 
 def RoundTo(num, digits=2):
     if num == 0: return 0
@@ -117,7 +129,7 @@ async def cmd_coin(msg):
 
 @bot.message_handler(["sysfetch"])
 async def cmd_sysfetch(msg):
-  UpTime = getReadableTime(round(time.time()) - StartTime)
+  UpTime = getReadableTime(round(time.time()) - startTime)
   return await bot.reply_to(msg,
   f"<b>Platform:</b> {platform.system()} {platform.release()}\n"
   f"<b>Architecture:</b> {platform.machine()}\n"
@@ -214,5 +226,49 @@ async def cmd_remind(msg):
  
   return await bot.send_message(msg.chat.id, f"Remind: {' '.join(arg[1:])}")
 
+
+@bot.message_handler(["note"])
+async def cmd_note(msg):
+  arg = msg.text.split()[1:]
+
+  if not notes.get(str(msg.chat.id)):
+    notes[str(msg.chat.id)] = []
+
+  if not arg:
+    return await bot.reply_to(msg, "Usage: /note <add/list/delete> <note>")
+  
+  if arg[0] == "add":
+    if len(arg) == 1:
+      return await bot.reply_to(msg, "Nothing to note here...")
+    notes[str(msg.chat.id)].append(" ".join(arg[1:]))
+    return await bot.reply_to(msg, "Note succesfully created.")
+
+  elif arg[0] == "list":
+    if not notes[str(msg.chat.id)]:
+      return await bot.reply_to(msg, "You have no notes, to create new: /note add <note>")
+    answer = "*Note List*\n"
+    for i in range(0, len(notes[str(msg.chat.id)])):
+      answer += f"{i+1}. {notes[str(msg.chat.id)][i]}\n"
+    return await bot.reply_to(msg, answer, parse_mode = 'Markdown')
+    
+  elif arg[0] == "delete":
+    if arg[1].isdigit():
+      if int(arg[1]) == 0 or int(arg[1])-1 > len(notes[str(msg.chat.id)]):
+        return await bot.reply_to(msg, "That note already doesn't exists.")
+      del notes[str(msg.chat.id)][int(arg[1])-1]
+      return await bot.reply_to(msg, "Note succesfully deleted.")
+    elif arg[1] == "all":
+      notes[str(msg.chat.id)].clear()
+      return await bot.reply_to(msg, "All notes was deleted.")
+    else:
+      return await bot.reply_to(msg, "Usage: /note delete <number/\"all\">")
+
+  else:
+    return await bot.reply_to(msg, "Usage: /note <add/list/delete> <note>")
+
+@atexit.register
+def onExit():
+  f = open('notes.json', 'w')
+  json.dump(notes, f)
 
 asyncio.run(bot.polling(none_stop=True, interval=0))
