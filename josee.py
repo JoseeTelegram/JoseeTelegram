@@ -13,6 +13,7 @@ import json
 import math
 import asyncio
 import atexit
+import colors
 
 import telebot
 from telebot.async_telebot import AsyncTeleBot
@@ -48,10 +49,10 @@ except:
   notes = {}
 
 def RoundTo(num, digits=2):
-    if num == 0: return 0
-    scale = int(-math.floor(math.log10(abs(num - int(num))))) + digits - 1
-    if scale < digits: scale = digits
-    return round(num, scale)
+  if num == 0: return 0
+  scale = int(-math.floor(math.log10(abs(num - int(num))))) + digits - 1
+  if scale < digits: scale = digits
+  return round(num, scale)
 
 
 # src: https://ru.stackoverflow.com/questions/499269
@@ -175,15 +176,26 @@ async def cmd_crypto(msg):
 @bot.message_handler(["rgb"])
 async def cmd_rgb(msg):
   arg = msg.text.split()[1:]
+
   if not arg:
     return await bot.reply_to(msg, "Usage: /rgb <r> <g> <b>")
+
+  r = int(arg[0])
+  g = int(arg[1])
+  b = int(arg[2])
+
   try: 
-    photo = img.new("RGB", (128, 128), (int(arg[0]), int(arg[1]), int(arg[2])))
+    photo = img.new("RGB", (128, 128), (r, g, b))
   except: 
     return await bot.reply_to(msg, "Error, usage: /rgb <r> <g> <b>")
+
   await bot.send_photo(msg.chat.id, photo,
-  f"*RGB:* {int(arg[0])}, {int(arg[1])}, {int(arg[2])}\n*HEX:* #%02x%02x%02x" % (int(arg[0]), int(arg[1]), int(arg[2])),
-  parse_mode = 'Markdown')
+  f"*RGB:* {r}, {g}, {b}\n"
+  f"*HEX:* #{''.join(str(i) for i in colors.rgb2hex(r, g, b))}\n"
+  f"*HSV:* {', '.join(str(round(i)) for i in colors.rgb2hsv(r, g, b))}\n"
+  f"*CMYK:* {', '.join(str(round(i)) for i in colors.rgb2cmyk(r, g, b))}\n",
+  parse_mode = "Markdown")
+
   return photo.close()
 
 
