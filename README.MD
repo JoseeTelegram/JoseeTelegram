@@ -10,6 +10,7 @@ rgb - Displays RGB to image and HEX.
 cat - Repeats your message.  
 remind - Reminds you of your message from the past!  
 note - Allows to use notes in telegram.
+pussy - Did you really want to see that...?
 
 ## Settings
 Add a file with that name to the root directory of the bot to start working.  

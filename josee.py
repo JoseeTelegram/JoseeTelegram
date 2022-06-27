@@ -118,8 +118,7 @@ def getReadableTime(time: int):
   
   return td, th, tm, ts
 
-
-@bot.message_handler(["coin"])
+@bot.message_handler("coin")
 async def cmd_coin(msg):
   if random.randint(0,1):
     answer = "Head"
@@ -128,7 +127,7 @@ async def cmd_coin(msg):
   return await bot.reply_to(msg, f"You get a {answer}!")
 
 
-@bot.message_handler(["sysfetch"])
+@bot.message_handler("sysfetch")
 async def cmd_sysfetch(msg):
   UpTime = getReadableTime(round(time.time()) - startTime)
   return await bot.reply_to(msg,
@@ -141,7 +140,7 @@ async def cmd_sysfetch(msg):
   parse_mode = 'HTML')
 
 
-@bot.message_handler(["random"])
+@bot.message_handler("random")
 async def cmd_random(msg):
   arg = msg.text.split()[1:]
   if not arg:
@@ -152,12 +151,12 @@ async def cmd_random(msg):
     return await bot.reply_to(msg, f"{arg[0]} isn\'t a number.")
 
 
-@bot.message_handler(["8ball"])
+@bot.message_handler("8ball")
 async def cmd_8ball(msg):
   return await bot.reply_to(msg, random.choice(data[0]['8ball']))
 
 
-@bot.message_handler(["crypto"])
+@bot.message_handler("crypto")
 async def cmd_crypto(msg):
   await bot.reply_to(msg, 'Please wait...')
   res = "*Popular cryptocurrencies*\n"
@@ -173,7 +172,7 @@ async def cmd_crypto(msg):
   return await bot.reply_to(msg, res, parse_mode = 'Markdown')
 
 
-@bot.message_handler(["rgb"])
+@bot.message_handler("rgb")
 async def cmd_rgb(msg):
   arg = msg.text.split()[1:]
 
@@ -199,12 +198,12 @@ async def cmd_rgb(msg):
   return photo.close()
 
 
-@bot.message_handler(["cat"])
+@bot.message_handler("cat")
 async def cmd_cat(msg):
   return await bot.send_message(msg.chat.id, ' '.join(msg.text.split()[1:]))
 
 
-@bot.message_handler(["remind"])
+@bot.message_handler("remind")
 async def cmd_remind(msg):
   arg = msg.text.split()[1:]
 
@@ -239,7 +238,7 @@ async def cmd_remind(msg):
   return await bot.send_message(msg.chat.id, f"Remind: {' '.join(arg[1:])}")
 
 
-@bot.message_handler(["note"])
+@bot.message_handler("note")
 async def cmd_note(msg):
   arg = msg.text.split()[1:]
 
@@ -277,6 +276,19 @@ async def cmd_note(msg):
 
   else:
     return await bot.reply_to(msg, "Usage: /note <add/list/delete> <note>")
+
+@bot.message_handler("pussy")
+async def cmd_pussy(msg):
+  try:
+    img = requests.get('https://cataas.com/c').content
+  except:
+    print('\"cataas.com\" seems don\'t avalable, trying long API request...')
+    try:
+      img = requests.get(json.loads(requests.get('https://api.thecatapi.com/v1/images/search').content)[0]['url']).content
+    except:
+      return await bot.reply_to(msg, 'No one server is not avalable, sorry!')
+  finally:
+    return await bot.send_photo(msg.chat.id, img, "Here, take it, pervert!", parse_mode = "Markdown")
 
 @atexit.register
 def onExit():
