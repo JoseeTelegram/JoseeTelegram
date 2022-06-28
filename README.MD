@@ -1,30 +1,17 @@
-# Josee: Telegram bot
+# Josee: Telegram Bot
 
 ## Commands  
-coin - Flips a coin.  
-random - Returns a random number from one to argument.  
-sysfetch - Gets server's system information.  
-crypto - Displays the value of the most popular cryptocurrencies.  
-8ball - Experiences your future with a magic ball.  
-rgb - Displays RGB to image and HEX.  
-cat - Repeats your message.  
-remind - Reminds you of your message from the past!  
-note - Allows to use notes in telegram.  
-pussy - Did you really want to see that...?
+- **8ball** - Experiences your future with a magic ball.
+- **cat** - Repeats your message.
+- **coin** - Flips a coin.
+- **crypto** - Displays the value of the most popular cryptocurrencies.
+- **note** - Allows to use notes in telegram.
+- **pussy** - Did you really want to see that...?
+- **random** - Returns a random number from one to argument.
+- **remind** - Reminds you of your message from the past!
+- **repeat** - Repeats the message.
+- **rgb** - Displays RGB to image and HEX.
+- **sysfetch** - Gets server's system information.
 
-## Settings
-Add a file with that name to the root directory of the bot to start working.  
-
-```python
-# settings.py
-
-token = 'your_token'
-
-# Debug Levels
-# FATAL - 50
-# ERROR - 40  
-# WARN - 30  
-# INFO - 20  
-# DEBUG - 10  
-debug_level = 30
-```
+## Run The Bot
+To start the bot, you need to configure it in *settings.py* and then run *josee.py*.

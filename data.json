@@ -1,58 +1,4 @@
 [{	
-	"help": {
-    "fun": {
-      "hello":"Say \"hello\" to bot and get the answer.",
-      "cat":"Translates your message into a nyaccent.",
-      "coin":"Tosses a coin with a random result.",
-      "dice":"Rolls a die with a random result (args: 4/6/8/12/20)."
-    },
-  
-    "info": {
-      "server":"Gets current server information (allias: serverinfo).",
-      "serverinfo":"Gets current server information (allias: server).",
-      "sysfetch":"Gets bot's server information."
-    },
-  
-    "mod": {
-      "purge":"Clears the current chat by the argument (no more than 100)."
-    },
-  
-    "utils": {
-      "crypto":"Displays the value of the most popular cryptocurrencies.",
-      "rome": "Converts input value in to Roman numerals system.",
-      "rgb": "Converts RGB value to HEX and display."
-    }
-	},
-	
-	
-	"hello": {
-    "str": [
-      "Nice to meet you, {}!",
-      "Hello, {}.",
-  
-      "Ohayo, {}~",
-      "Konichiwa, {}~",
-      "Yoroshiku, {}~",
-      "Hai, {}~",
-  
-      "{}, nipaa~",
-      "Tut ut ruu, {}~"
-    ],
-    
-    "gif": [
-        "https://c.tenor.com/cDCkQ6BPlF4AAAAC/pat-pat-anime.gif",
-        "https://c.tenor.com/3g3D1mECft0AAAAC/anime-hi.gif",
-        "https://c.tenor.com/2Unb5b033rUAAAAC/neko-cat-neko-hello.gif",
-        "https://c.tenor.com/A-SdD3G9q6oAAAAC/new-game-mozuku.gif",
-        "https://c.tenor.com/S6Kxbixp1yUAAAAC/gakkou-gurashi-hello.gif",
-        "https://c.tenor.com/rWN4ZHFLknoAAAAC/bye-hi.gif",
-        "https://c.tenor.com/VtJfEFAP3H8AAAAC/higurashi-gou.gif",
-        "https://c.tenor.com/yPbeab7wYlsAAAAC/hi-anime.gif",
-        "https://c.tenor.com/8-jJyFqnWxwAAAAC/steins-gate-wave.gif"
-    ]
-	},
-	
-	
 	"crypto": {
     "btc": {
       "name":"Bitcoin",
@@ -127,29 +73,6 @@
     }
 	},
 	
-	
-	"cat": {
-    "ny": "nya",
-	
-    "na": "nya",
-    "ne": "nye",
-    "ni": "ny",
-    "no": "nyo",
-    
-    "ma": "mya",
-    "me": "mye",
-    "mi": "my",
-    "mo": "myo",
-    
-    "!!!": "-nya!!!",
-    "!?": "-nya!?",
-    "...": "-nya...",
-  
-    "!": "-nya!",
-    "?": "-nya?",
-    ".": "-nya."
-	},
-
   "8ball": [
     "Without a doubt.",
     "As I see it yes.",
