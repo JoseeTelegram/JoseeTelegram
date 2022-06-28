@@ -1,8 +1,8 @@
-import settings
+from settings import *
 
-import libs.colors as colors
-import libs.round as round
-import libs.time as time
+import libs.colors as jColors
+import libs.round as jRound
+import libs.time as jTime
 
 from PIL import Image as img
 
@@ -20,10 +20,10 @@ import atexit
 import telebot
 from telebot.async_telebot import AsyncTeleBot
 
-settings = AsyncTeleBot(settings.token)
+settings = AsyncTeleBot(token)
 
 log = telebot.logger
-log.setLevel(settings.debug_level)
+log.setLevel(debug)
 
 ch = logging.StreamHandler(sys.stdout)
 formatter = logging.Formatter('[%(asctime)s] %(levelname)s - %(message)s', '%m-%d %H:%M:%S')
@@ -31,7 +31,7 @@ ch.setFormatter(formatter)
 
 log.addHandler(ch)
 
-startTime = round(time.time())
+startTime = time.time()
 
 f = open('data.json', 'r')
 data = json.load(f)
@@ -51,7 +51,7 @@ except:
   sep = "\n")
   notes = {}
 
-@settings.message_handler("coin")
+@settings.message_handler(["coin"])
 async def cmd_coin(msg):
   if random.randint(0,1):
     answer = "Head"
@@ -60,9 +60,9 @@ async def cmd_coin(msg):
   return await settings.reply_to(msg, f"You get a {answer}!")
 
 
-@settings.message_handler("sysfetch")
+@settings.message_handler(["sysfetch"])
 async def cmd_sysfetch(msg):
-  UpTime = time.getReadableTime(round(time.time()) - startTime)
+  UpTime = jTime.getReadableTime(round(time.time() - startTime))
   return await settings.reply_to(msg,
   f"<b>Platform:</b> {platform.system()} {platform.release()}\n"
   f"<b>Architecture:</b> {platform.machine()}\n"
@@ -73,7 +73,7 @@ async def cmd_sysfetch(msg):
   parse_mode = 'HTML')
 
 
-@settings.message_handler("random")
+@settings.message_handler(["random"])
 async def cmd_random(msg):
   arg = msg.text.split()[1:]
 
@@ -86,28 +86,28 @@ async def cmd_random(msg):
     return await settings.reply_to(msg, f"{arg[0]} isn\'t a number.")
 
 
-@settings.message_handler("8ball")
+@settings.message_handler(["8ball"])
 async def cmd_8ball(msg):
   return await settings.reply_to(msg, random.choice(data[0]['8ball']))
 
 
-@settings.message_handler("crypto")
+@settings.message_handler(["crypto"])
 async def cmd_crypto(msg):
   await settings.reply_to(msg, 'Please wait...')
   res = "*Popular cryptocurrencies*\n"
   for i in data[0]['crypto']:
     # print("Requesting:", i)
     req = requests.get(f'https://data.messari.io/api/v1/assets/{i}/metrics').json()['data']['market_data']
-    res += f"*{data[0]['crypto'][i]['name']} ({data[0]['crypto'][i]['short-name']})* - ${round.RoundTo(req['price_usd'])}"
-    if req['percent_change_usd_last_1_hour']:   res += f" (1h: {round.RoundTo(req['percent_change_usd_last_1_hour'])}%"
-    if req['percent_change_usd_last_24_hours']: res += f" 24h: {round.RoundTo(req['percent_change_usd_last_24_hours'])}%)"
+    res += f"*{data[0]['crypto'][i]['name']} ({data[0]['crypto'][i]['short-name']})* - ${jRound.RoundTo(req['price_usd'])}"
+    if req['percent_change_usd_last_1_hour']:   res += f" (1h: {jRound.RoundTo(req['percent_change_usd_last_1_hour'])}%"
+    if req['percent_change_usd_last_24_hours']: res += f" 24h: {jRound.RoundTo(req['percent_change_usd_last_24_hours'])}%)"
     else: 
       if req['percent_change_usd_last_1_hour']: res += ")"
     res += "\n"
   return await settings.reply_to(msg, res, parse_mode = 'Markdown')
 
 
-@settings.message_handler("rgb")
+@settings.message_handler(["rgb"])
 async def cmd_rgb(msg):
   arg = msg.text.split()[1:]
 
@@ -125,20 +125,20 @@ async def cmd_rgb(msg):
 
   await settings.send_photo(msg.chat.id, photo,
   f"*RGB:* {r}, {g}, {b}\n"
-  f"*HEX:* #{''.join(str(i) for i in colors.rgb2hex(r, g, b))}\n"
-  f"*HSV:* {', '.join(str(round(i)) for i in colors.rgb2hsv(r, g, b))}\n"
-  f"*CMYK:* {', '.join(str(round(i)) for i in colors.rgb2cmyk(r, g, b))}\n",
+  f"*HEX:* #{''.join(str(i) for i in jColors.rgb2hex(r, g, b))}\n"
+  f"*HSV:* {', '.join(str(round(i)) for i in jColors.rgb2hsv(r, g, b))}\n"
+  f"*CMYK:* {', '.join(str(round(i)) for i in jColors.rgb2cmyk(r, g, b))}\n",
   parse_mode = "Markdown")
 
   return photo.close()
 
 
-@settings.message_handler("cat")
+@settings.message_handler(["cat"])
 async def cmd_cat(msg):
   return await settings.send_message(msg.chat.id, ' '.join(msg.text.split()[1:]))
 
 
-@settings.message_handler("remind")
+@settings.message_handler(["remind"])
 async def cmd_remind(msg):
   arg = msg.text.split()[1:]
 
@@ -173,7 +173,7 @@ async def cmd_remind(msg):
   return await settings.send_message(msg.chat.id, f"Remind: {' '.join(arg[1:])}")
 
 
-@settings.message_handler("note")
+@settings.message_handler(["note"])
 async def cmd_note(msg):
   arg = msg.text.split()[1:]
 
@@ -213,7 +213,7 @@ async def cmd_note(msg):
     return await settings.reply_to(msg, "Usage: /note <add/list/delete> <note>")
 
 
-@settings.message_handler("pussy")
+@settings.message_handler(["pussy"])
 async def cmd_pussy(msg):
   try:
     img = requests.get('https://cataas.com/c').content
@@ -227,7 +227,7 @@ async def cmd_pussy(msg):
     return await settings.send_photo(msg.chat.id, img, "Here, take it, pervert!", parse_mode = "Markdown")
 
 
-@settings.message_handler("repeat")
+@settings.message_handler(["repeat"])
 async def cmd_repeat(msg):
   arg = msg.text.split()[1:]  
   
