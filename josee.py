@@ -232,7 +232,7 @@ async def cmd_repeat(msg):
   arg = msg.text.split()[1:]  
   
   if not arg:
-    return await settings.reply_to("Usage: /repeat <count> <message>")
+    return await settings.reply_to(msg, "Usage: /repeat <count> <message>")
 
   try:
     count = int(arg[0])
@@ -253,4 +253,4 @@ def onExit():
   f = open('notes.json', 'w')
   json.dump(notes, f)
 
-asyncio.run(settings.polling(none_stop=True, interval=0))
+asyncio.run(settings.polling(non_stop=True, interval=0))
