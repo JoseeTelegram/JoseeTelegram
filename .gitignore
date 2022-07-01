@@ -1,4 +1,6 @@
 __pycache__
-forgotten/__pycache__
+
+test/__pycache__
+test/end_test.py
+
 notes.json
-settings.py

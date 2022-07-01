@@ -14,14 +14,4 @@
 - **sysfetch** - Gets server's system information.
 
 ## Run The Bot
-To start the bot, you need to create this *settings.py* and then run *josee.py*.
-
-### settings.py
-```py
-
-# If you don’t know where to get token, follow this tutorial: https://core.telegram.org/bots#3-how-do-i-create-a-bot
-token = 'your_token_here'
-
-# Debug levels: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL".
-debug = "WARNING"
-```
+To start the bot, you need to edit *settings.py* and then run *josee.py*.

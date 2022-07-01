@@ -1,8 +1,8 @@
 from settings import *
 
-import libs.colors as jColors
-import libs.round as jRound
-import libs.time as jTime
+import lib.colors as jColors
+import lib.round as jRound
+import lib.time as jTime
 
 from PIL import Image as img
 
@@ -16,12 +16,12 @@ import requests
 import json
 import asyncio
 import atexit
+import os
 
 import telebot
 from telebot.async_telebot import AsyncTeleBot
 
-settings = AsyncTeleBot(token)
-
+bot = AsyncTeleBot(token)
 log = telebot.logger
 log.setLevel(debug)
 
@@ -31,88 +31,134 @@ ch.setFormatter(formatter)
 
 log.addHandler(ch)
 
-startTime = time.time()
+start_time = time.time()
 
-f = open('data.json', 'r')
-data = json.load(f)
-f.close()
+print("Checking necessary data files...")
 
-try:
-  f = open('notes.json', 'r')
-  notes = json.load(f)
-  f.close()
-except:
-  print("Something wrong with \"notes.json\"...",
-  "If you run this bot first time, ignore this message\n",
-  "But if not, try to check:",
-  "1. Existing file in the root folder of the bot.",
-  "2. Permission to read (and write) file.",
-  "3. Correct file format as json.",
-  sep = "\n")
-  notes = {}
+files_data = ["8ball.txt", "crypto.json"]
+files_dir = os.listdir("data")
 
-@settings.message_handler(["coin"])
-async def cmd_coin(msg):
-  if random.randint(0,1):
-    answer = "Head"
+for i in files_data:
+  print(f"{i}... ", end="")
+  try:
+    file = open(f"data/{i}")
+  except:
+    print("fail, update file")
+    new = open(f"data/{i}", "w")
+    new.write(requests.get(f"https://raw.githubusercontent.com/Josee-Yamamura/JoseeTelegram/main/data/{i}").text)
+    new.close()
   else:
-    answer = "Tail"
-  return await settings.reply_to(msg, f"You get a {answer}!")
+    print("ok")
+  finally:
+    file.close()
+
+print("\nChecking unnecessary data files...")
+
+files_data = ["notes.json"]
+
+for i in files_data:
+  print(f"{i}... ", end="")
+  try:
+    file = open(f"data/{i}", "r")
+  except:
+    print("fail, creating file")
+    new = open(f"data/{i}", "w")
+    if i[i.find('.')+1:] == "json": new.write("{}")
+  else:
+    print("ok")
+  finally:
+    file.close()
+
+print("\nReading data files...")
+
+data = {}
+for i in files_dir:
+  file = open(f"data/{i}", "r")
+  file_name = i[:i.find('.')]
+  file_format = i[i.find('.')+1:]
+  if file_format == "txt":
+    data[file_name] = file.readlines()
+  elif file_format == "json":
+    data[file_name] = json.load(file)
+  file.close
+
+print("\nBot starting...")
+
+# @bot.message_handler(content_types=["text"])
+# async def mention(msg):
+#   my = await bot.get_me()
+#   print(my.username)
+#   if msg.text == f"@{my.username}":
+#     await bot.send_message(msg.chat.id, "https://github.com/Josee-Yamamura/JoseeTelegram")
 
 
-@settings.message_handler(["sysfetch"])
+@bot.message_handler(["coin"])
+async def cmd_coin(msg):
+  return await bot.reply_to(msg, f"You get a {['Head', 'Tail'][random.randint(0,1)]}!")
+
+
+@bot.message_handler(["sysfetch"])
 async def cmd_sysfetch(msg):
-  UpTime = jTime.getReadableTime(round(time.time() - startTime))
-  return await settings.reply_to(msg,
+  up_time = jTime.getReadableTime(round(time.time() - start_time))
+  return await bot.reply_to(msg,
   f"<b>Platform:</b> {platform.system()} {platform.release()}\n"
   f"<b>Architecture:</b> {platform.machine()}\n"
-  f"<b>Uptime:</b> {UpTime[0]} days {UpTime[1]} hours {UpTime[2]} mins {UpTime[3]} secs\n"
+  f"<b>Uptime:</b> {up_time[0]} days {up_time[1]} hours {up_time[2]} mins {up_time[3]} secs\n"
   f"<b>CPU:</b> {round(psutil.cpu_freq()[0]*1000)}/{round(psutil.cpu_freq()[2])} GHz ({round(psutil.cpu_percent())}%)\n"
   f"<b>RAM:</b> {round(psutil.virtual_memory().used / (1024.0 * 2))}/{round(psutil.virtual_memory().total / (1024.0 * 2))} MB ({round(psutil.virtual_memory().percent)}%)\n"
   f"<b>IP:</b> {requests.get('http://icanhazip.com').text.rstrip()}\n",
   parse_mode = 'HTML')
 
 
-@settings.message_handler(["random"])
+@bot.message_handler(["random"])
 async def cmd_random(msg):
   arg = msg.text.split()[1:]
 
   if not arg:
-    return await settings.reply_to(msg, "Usage: /random <int>")
+    return await bot.reply_to(msg, "Usage: /random <start> <end>")
 
   try:
-    return await settings.reply_to(msg, random.randrange(0, int(arg[0])))
+    start = int(arg[0])
+    if len(arg) == 1:
+      return await bot.reply_to(msg, random.randrange(0, start))
+    end = int(arg[1])
+    if start < end:
+      return await bot.reply_to(msg, random.randrange(start, end))
+    elif start == end:
+      return await bot.reply_to(msg, "Both integers are the same.")
+    else:
+      return await bot.reply_to(msg, random.randrange(end, start))
   except ValueError:
-    return await settings.reply_to(msg, f"{arg[0]} isn\'t a number.")
+    return await bot.reply_to(msg, f"One of the arguments isn\'t an integer.")
 
 
-@settings.message_handler(["8ball"])
+@bot.message_handler(["8ball"])
 async def cmd_8ball(msg):
-  return await settings.reply_to(msg, random.choice(data[0]['8ball']))
+  return await bot.reply_to(msg, random.choice(data['8ball']))
 
 
-@settings.message_handler(["crypto"])
+@bot.message_handler(["crypto"])
 async def cmd_crypto(msg):
-  await settings.reply_to(msg, 'Please wait...')
+  answer = await bot.reply_to(msg, 'Please wait...')
   res = "*Popular cryptocurrencies*\n"
-  for i in data[0]['crypto']:
+  for i in data['crypto']:
     # print("Requesting:", i)
     req = requests.get(f'https://data.messari.io/api/v1/assets/{i}/metrics').json()['data']['market_data']
-    res += f"*{data[0]['crypto'][i]['name']} ({data[0]['crypto'][i]['short-name']})* - ${jRound.RoundTo(req['price_usd'])}"
+    res += f"*{data['crypto'][i]['name']} ({data['crypto'][i]['short-name']})* - ${jRound.RoundTo(req['price_usd'])}"
     if req['percent_change_usd_last_1_hour']:   res += f" (1h: {jRound.RoundTo(req['percent_change_usd_last_1_hour'])}%"
     if req['percent_change_usd_last_24_hours']: res += f" 24h: {jRound.RoundTo(req['percent_change_usd_last_24_hours'])}%)"
     else: 
       if req['percent_change_usd_last_1_hour']: res += ")"
     res += "\n"
-  return await settings.reply_to(msg, res, parse_mode = 'Markdown')
+  return await bot.edit_message_text(res, msg.chat.id, answer.message_id, parse_mode = 'Markdown')
 
 
-@settings.message_handler(["rgb"])
+@bot.message_handler(["rgb"])
 async def cmd_rgb(msg):
   arg = msg.text.split()[1:]
 
   if not arg:
-    return await settings.reply_to(msg, "Usage: /rgb <r> <g> <b>")
+    return await bot.reply_to(msg, "Usage: /rgb <r> <g> <b>")
 
   r = int(arg[0])
   g = int(arg[1])
@@ -121,9 +167,9 @@ async def cmd_rgb(msg):
   try: 
     photo = img.new("RGB", (128, 128), (r, g, b))
   except: 
-    return await settings.reply_to(msg, "Error, usage: /rgb <r> <g> <b>")
+    return await bot.reply_to(msg, "Error, usage: /rgb <r> <g> <b>")
 
-  await settings.send_photo(msg.chat.id, photo,
+  await bot.send_photo(msg.chat.id, photo,
   f"*RGB:* {r}, {g}, {b}\n"
   f"*HEX:* #{''.join(str(i) for i in jColors.rgb2hex(r, g, b))}\n"
   f"*HSV:* {', '.join(str(round(i)) for i in jColors.rgb2hsv(r, g, b))}\n"
@@ -133,23 +179,24 @@ async def cmd_rgb(msg):
   return photo.close()
 
 
-@settings.message_handler(["cat"])
+@bot.message_handler(["cat"])
 async def cmd_cat(msg):
-  return await settings.send_message(msg.chat.id, ' '.join(msg.text.split()[1:]))
+  res = msg.text[5:]
+  if res: return await bot.send_message(msg.chat.id, res)
 
 
-@settings.message_handler(["remind"])
+@bot.message_handler(["remind"])
 async def cmd_remind(msg):
   arg = msg.text.split()[1:]
 
   if not arg:
-    return await settings.reply_to(msg, "Usage: /remind <time> <message>")
+    return await bot.reply_to(msg, "Usage: /remind <time> <message>")
   
   if arg[0].isdigit():
     time = arg[0]
   else:
     if not arg[0][0].isdigit():
-      return await settings.reply_to(msg, "Argument doesn't contain a number.")
+      return await bot.reply_to(msg, "Argument doesn't contain a number.")
     for sym in range(0, len(arg[0])):
       if not arg[0][sym].isdigit():
         time = int(arg[0][:sym])
@@ -160,60 +207,60 @@ async def cmd_remind(msg):
         elif arg[0][sym:] == "hour" or arg[0][sym:] == "h":
           time *= 3600
         else:
-          return await settings.reply_to(msg, f"Argument is not entered in format. Example: 10sec/30min/1hour or 10s/30m/1h.")
+          return await bot.reply_to(msg, f"Argument is not entered in format. Example: 10sec/30min/1hour or 10s/30m/1h.")
         break
       
-  await settings.reply_to(msg, f"Ugh... fine, I'll remind you in {time} seconds.")
+  await bot.reply_to(msg, f"Ugh... fine, I'll remind you in {time} seconds.")
   await asyncio.sleep(time)
   
   if msg.from_user.id != msg.chat.id:
     # await bot.forward_message(msg.from_user.id, msg.chat.id, msg.id)
-    return await settings.send_message(msg.chat.id, f"@{msg.from_user.username}, remind: {' '.join(arg[1:])}")
+    return await bot.send_message(msg.chat.id, f"@{msg.from_user.username}, remind: {' '.join(arg[1:])}")
  
-  return await settings.send_message(msg.chat.id, f"Remind: {' '.join(arg[1:])}")
+  return await bot.send_message(msg.chat.id, f"Remind: {' '.join(arg[1:])}")
 
 
-@settings.message_handler(["note"])
+@bot.message_handler(["note"])
 async def cmd_note(msg):
   arg = msg.text.split()[1:]
 
   if not arg:
-    return await settings.reply_to(msg, "Usage: /note <add/list/delete> <note>")
+    return await bot.reply_to(msg, "Usage: /note <add/list/delete> <note>")
   
-  if not notes.get(str(msg.chat.id)):
-    notes[str(msg.chat.id)] = []
+  if not data['notes'].get(str(msg.chat.id)):
+    data['notes'][str(msg.chat.id)] = []
 
   if arg[0] == "add":
     if len(arg) == 1:
-      return await settings.reply_to(msg, "Nothing to note here...")
-    notes[str(msg.chat.id)].append(" ".join(arg[1:]))
-    return await settings.reply_to(msg, "Note succesfully created.")
+      return await bot.reply_to(msg, "Nothing to note here...")
+    data['notes'][str(msg.chat.id)].append(" ".join(arg[1:]))
+    return await bot.reply_to(msg, "Note succesfully created.")
 
   elif arg[0] == "list":
-    if not notes[str(msg.chat.id)]:
-      return await settings.reply_to(msg, "You have no notes, to create new: /note add <note>")
+    if not data['notes'][str(msg.chat.id)]:
+      return await bot.reply_to(msg, "You have no data['notes'], to create new: /note add <note>")
     answer = "*Note List*\n"
-    for i in range(0, len(notes[str(msg.chat.id)])):
-      answer += f"{i+1}. {notes[str(msg.chat.id)][i]}\n"
-    return await settings.reply_to(msg, answer, parse_mode = 'Markdown')
+    for i in range(0, len(data['notes'][str(msg.chat.id)])):
+      answer += f"{i+1}. {data['notes'][str(msg.chat.id)][i]}\n"
+    return await bot.reply_to(msg, answer, parse_mode = 'Markdown')
     
   elif arg[0] == "delete":
     if arg[1].isdigit():
-      if int(arg[1]) == 0 or int(arg[1])-1 > len(notes[str(msg.chat.id)]):
-        return await settings.reply_to(msg, "That note already doesn't exists.")
-      del notes[str(msg.chat.id)][int(arg[1])-1]
-      return await settings.reply_to(msg, "Note succesfully deleted.")
+      if int(arg[1]) == 0 or int(arg[1])-1 > len(data['notes'][str(msg.chat.id)]):
+        return await bot.reply_to(msg, "That note already doesn't exists.")
+      del data['notes'][str(msg.chat.id)][int(arg[1])-1]
+      return await bot.reply_to(msg, "Note succesfully deleted.")
     elif arg[1] == "all":
-      notes[str(msg.chat.id)].clear()
-      return await settings.reply_to(msg, "All notes was deleted.")
+      data['notes'][str(msg.chat.id)].clear()
+      return await bot.reply_to(msg, "All notes was deleted.")
     else:
-      return await settings.reply_to(msg, "Usage: /note delete <number/\"all\">")
+      return await bot.reply_to(msg, "Usage: /note delete <number/\"all\">")
 
   else:
-    return await settings.reply_to(msg, "Usage: /note <add/list/delete> <note>")
+    return await bot.reply_to(msg, "Usage: /note <add/list/delete> <note>")
 
 
-@settings.message_handler(["pussy"])
+@bot.message_handler(["pussy"])
 async def cmd_pussy(msg):
   try:
     img = requests.get('https://cataas.com/c').content
@@ -222,35 +269,39 @@ async def cmd_pussy(msg):
     try:
       img = requests.get(json.loads(requests.get('https://api.thecatapi.com/v1/images/search').content)[0]['url']).content
     except:
-      return await settings.reply_to(msg, 'No one server is not avalable, sorry!')
+      return await bot.reply_to(msg, 'No one server is not avalable, sorry!')
   finally:
-    return await settings.send_photo(msg.chat.id, img, "Here, take it, pervert!", parse_mode = "Markdown")
+    return await bot.send_photo(msg.chat.id, img, "Here, take it, pervert!", parse_mode = "Markdown")
 
 
-@settings.message_handler(["repeat"])
+@bot.message_handler(["repeat"])
 async def cmd_repeat(msg):
   arg = msg.text.split()[1:]  
   
   if not arg:
-    return await settings.reply_to(msg, "Usage: /repeat <count> <message>")
+    return await bot.reply_to(msg, "Usage: /repeat <count> <message>")
 
   try:
     count = int(arg[0])
   except:
-    return await settings.reply_to(msg, "Argument isn't number.")
+    return await bot.reply_to(msg, "Argument isn't number.")
   
   if count < 0:
-    return await settings.reply_to(msg, "Argument isn't positive.")
+    return await bot.reply_to(msg, "Argument isn't positive.")
 
   for _ in range(count):
-    await settings.send_message(msg.chat.id, ' '.join(arg[1:]))
+    await bot.send_message(msg.chat.id, ' '.join(arg[1:]))
   
   return
 
 
 @atexit.register
 def onExit():
-  f = open('notes.json', 'w')
-  json.dump(notes, f)
+  f = open('data/notes.json', 'w')
+  json.dump(data['notes'], f)
+  f.close()
 
-asyncio.run(settings.polling(non_stop=True, interval=0))
+
+print("Ready!")
+
+asyncio.run(bot.polling(non_stop=True, interval=0))
