@@ -1,8 +1,8 @@
 from settings import *
 
-import lib.colors as jColors
-import lib.round as jRound
-import lib.time as jTime
+import libs.colors as jColors
+import libs.round as jRound
+import libs.time as jTime
 
 from PIL import Image as img
 
