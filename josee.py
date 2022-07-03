@@ -1,25 +1,23 @@
-from settings import *
+import asyncio
+import atexit
+import json
+import logging
+import os
+import platform
+import random
+import sys
+import time
+
+import psutil
+import requests
+import telebot
+from PIL import Image as img
+from telebot.async_telebot import AsyncTeleBot
 
 import libs.colors as jColors
 import libs.round as jRound
 import libs.time as jTime
-
-from PIL import Image as img
-
-import sys
-import logging
-import platform
-import time
-import random
-import psutil
-import requests
-import json
-import asyncio
-import atexit
-import os
-
-import telebot
-from telebot.async_telebot import AsyncTeleBot
+from settings import *
 
 bot = AsyncTeleBot(token)
 log = telebot.logger
