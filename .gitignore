@@ -1,6 +1,6 @@
 __pycache__
 
-test/__pycache__
-test/end_test.py
+data/notes.json
 
-notes.json
+test
+forgotten

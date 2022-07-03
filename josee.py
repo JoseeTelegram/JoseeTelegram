@@ -33,41 +33,24 @@ log.addHandler(ch)
 
 start_time = time.time()
 
-print("Checking necessary data files...")
+print("Checking data files...")
 
-files_data = ["8ball.txt", "crypto.json"]
+files_data = ["8ball.txt", "crypto.json", "notes.json"]
+
+if not os.path.exists("data"):
+  os.mkdir("data")
+
 files_dir = os.listdir("data")
 
 for i in files_data:
   print(f"{i}... ", end="")
-  try:
-    file = open(f"data/{i}")
-  except:
-    print("fail, update file")
-    new = open(f"data/{i}", "w")
-    new.write(requests.get(f"https://raw.githubusercontent.com/Josee-Yamamura/JoseeTelegram/main/data/{i}").text)
-    new.close()
+  if not os.path.exists(f"data/{i}"):
+    print("fail, downloading the file")
+    file = open(f"data/{i}", "w")
+    file.write(requests.get(f"https://raw.githubusercontent.com/Josee-Yamamura/JoseeTelegram/main/data/{i}").text)
+    file.close()
   else:
     print("ok")
-  finally:
-    file.close()
-
-print("\nChecking unnecessary data files...")
-
-files_data = ["notes.json"]
-
-for i in files_data:
-  print(f"{i}... ", end="")
-  try:
-    file = open(f"data/{i}", "r")
-  except:
-    print("fail, creating file")
-    new = open(f"data/{i}", "w")
-    if i[i.find('.')+1:] == "json": new.write("{}")
-  else:
-    print("ok")
-  finally:
-    file.close()
 
 print("\nReading data files...")
 
@@ -81,6 +64,9 @@ for i in files_dir:
   elif file_format == "json":
     data[file_name] = json.load(file)
   file.close
+
+del files_data
+del files_dir
 
 print("\nBot starting...")
 
