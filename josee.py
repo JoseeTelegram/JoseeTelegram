@@ -11,7 +11,7 @@ import time
 import psutil
 import requests
 import telebot
-from PIL import Image as img
+from PIL import Image as IMG
 from telebot.async_telebot import AsyncTeleBot
 
 import libs.colors as jColors
@@ -33,7 +33,7 @@ start_time = time.time()
 
 print("Checking data files...")
 
-files_data = ["8ball.txt", "crypto.json", "notes.json"]
+files_data = ["8ball.txt", "crypto.json", "notes.json", "cat.jpg"]
 
 if not os.path.exists("data"):
   os.mkdir("data")
@@ -149,7 +149,7 @@ async def cmd_rgb(msg):
   b = int(arg[2])
 
   try: 
-    photo = img.new("RGB", (128, 128), (r, g, b))
+    photo = IMG.new("RGB", (128, 128), (r, g, b))
   except: 
     return await bot.reply_to(msg, "Error, usage: /rgb <r> <g> <b>")
 
@@ -246,16 +246,39 @@ async def cmd_note(msg):
 
 @bot.message_handler(["pussy"])
 async def cmd_pussy(msg):
-  try:
-    img = requests.get('https://cataas.com/c').content
-  except:
-    print('\"cataas.com\" seems don\'t avalable, trying long API request...')
-    try:
-      img = requests.get(json.loads(requests.get('https://api.thecatapi.com/v1/images/search').content)[0]['url']).content
-    except:
-      return await bot.reply_to(msg, 'No one server is not avalable, sorry!')
-  finally:
-    return await bot.send_photo(msg.chat.id, img, "Here, take it, pervert!", parse_mode = "Markdown")
+  arg = msg.text.split()[1:]
+  res = "Here, take it, pervert!"
+  if requests.get("https://cataas.com").status_code != 200:
+    img = IMG.open("data/cat.jpg")
+    res = "Something went wrong, so I draw this for you, pervert!"
+  else:
+    if not arg:
+      img = requests.get('https://cataas.com/c').content
+      if random.random() <= 0.25:
+        res += " <span class=\"tg-spoiler\">Also try \"pussy help\"!</span>"
+    else:
+      if arg[0] == "help":
+        return await bot.reply_to(msg,
+        "\n\nCat with a text: _/pussy say <text>_"
+        "\nCat with a tag: _/pussy <tag>_"
+        "\nCat with a tag and text: _/pussy <tag> <text>_"
+        "\n\nYou also can use advanced options by url: _/pussy url <url>_"
+        "\nExample: _/pussy url gif/s/Hello?fi=sepia&c=orange&s=40&t=or_"
+        "\n\nAll tags you can find here: [*click me*](https://cataas.com/api/tags)",
+        parse_mode = "Markdown")
+      elif arg[0] == "say":
+        if len(arg) == 1:
+          return await bot.reply_to(msg, "Nothing was found to say!")
+        else:
+          img = requests.get(f'https://cataas.com/c/s/{" ".join(arg[1:])}').content
+      elif arg[0] == "url":
+        img = requests.get(f'https://cataas.com/c/{" ".join(arg[1:])}').content
+      else:
+        if len(arg) == 1:
+          img = requests.get(f'https://cataas.com/c/{arg[0]}').content
+        else:
+          img = requests.get(f'https://cataas.com/c/{arg[0]}/s/{" ".join(arg[1:])}').content
+  return await bot.send_video(msg.chat.id, img, res, parse_mode = "HTML")
 
 
 @bot.message_handler(["repeat"])
