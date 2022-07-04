@@ -68,14 +68,6 @@ del files_dir
 
 print("\nBot starting...")
 
-@bot.message_handler(content_types=["text"])
-async def mention(msg):
-  my = await bot.get_me()
-  print(my.username)
-  if msg.text == f"@{my.username}":
-    await bot.send_message(msg.chat.id, "https://github.com/Josee-Yamamura/JoseeTelegram")
-
-
 @bot.message_handler(["coin"])
 async def cmd_coin(msg):
   return await bot.reply_to(msg, f"You get a {['Head', 'Tail'][random.randint(0,1)]}!")
@@ -313,6 +305,13 @@ def onExit():
   f.close()
 
 
-print("Ready!")
+@bot.message_handler(content_types=["text"])
+async def get_mention(msg):
+  my = await bot.get_me()
+  if msg.text == f"@{my.username}":
+    await bot.send_message(msg.chat.id, "https://github.com/Josee-Yamamura/JoseeTelegram")
 
-asyncio.run(bot.polling(non_stop=True, interval=0))
+
+if __name__ == "__main__":
+  print("Ready!")
+  asyncio.run(bot.polling(non_stop=True, interval=0))
