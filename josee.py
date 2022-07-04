@@ -68,12 +68,12 @@ del files_dir
 
 print("\nBot starting...")
 
-# @bot.message_handler(content_types=["text"])
-# async def mention(msg):
-#   my = await bot.get_me()
-#   print(my.username)
-#   if msg.text == f"@{my.username}":
-#     await bot.send_message(msg.chat.id, "https://github.com/Josee-Yamamura/JoseeTelegram")
+@bot.message_handler(content_types=["text"])
+async def mention(msg):
+  my = await bot.get_me()
+  print(my.username)
+  if msg.text == f"@{my.username}":
+    await bot.send_message(msg.chat.id, "https://github.com/Josee-Yamamura/JoseeTelegram")
 
 
 @bot.message_handler(["coin"])
@@ -246,39 +246,43 @@ async def cmd_note(msg):
 
 @bot.message_handler(["pussy"])
 async def cmd_pussy(msg):
+  if requests.get("https://cataas.com").status_code != 200:
+    return await bot.send_photo(msg.chat.id, IMG.open("data/cat.jpg"), "Something went wrong, so I draw this for you, baka!")
+
   arg = msg.text.split()[1:]
   res = "Here, take it, pervert!"
-  if requests.get("https://cataas.com").status_code != 200:
-    img = IMG.open("data/cat.jpg")
-    res = "Something went wrong, so I draw this for you, pervert!"
+
+  if not arg:
+    req = requests.get('https://cataas.com/c')
+    if random.random() <= 0.25:
+      res += " <span class=\"tg-spoiler\">Also try \"pussy help\"!</span>"
   else:
-    if not arg:
-      img = requests.get('https://cataas.com/c').content
-      if random.random() <= 0.25:
-        res += " <span class=\"tg-spoiler\">Also try \"pussy help\"!</span>"
-    else:
-      if arg[0] == "help":
-        return await bot.reply_to(msg,
-        "\n\nCat with a text: _/pussy say <text>_"
-        "\nCat with a tag: _/pussy <tag>_"
-        "\nCat with a tag and text: _/pussy <tag> <text>_"
-        "\n\nYou also can use advanced options by url: _/pussy url <url>_"
-        "\nExample: _/pussy url gif/s/Hello?fi=sepia&c=orange&s=40&t=or_"
-        "\n\nAll tags you can find here: [*click me*](https://cataas.com/api/tags)",
-        parse_mode = "Markdown")
-      elif arg[0] == "say":
-        if len(arg) == 1:
-          return await bot.reply_to(msg, "Nothing was found to say!")
-        else:
-          img = requests.get(f'https://cataas.com/c/s/{" ".join(arg[1:])}').content
-      elif arg[0] == "url":
-        img = requests.get(f'https://cataas.com/c/{" ".join(arg[1:])}').content
+    if arg[0] == "help":
+      return await bot.reply_to(msg,
+      "\n\nCat with a text: _/pussy say <text>_"
+      "\nCat with a tag: _/pussy <tag>_"
+      "\nCat with a tag and text: _/pussy <tag> <text>_"
+      "\n\nYou also can use advanced options by url: _/pussy url <url>_"
+      "\nExample: _/pussy url gif/s/Hello?fi=sepia&c=orange&s=40&t=or_"
+      "\n\nAll tags you can find here: [*click me*](https://cataas.com/api/tags)",
+      parse_mode = "Markdown")
+    elif arg[0] == "say":
+      if len(arg) == 1:
+        return await bot.reply_to(msg, "Nothing was found to say!")
       else:
-        if len(arg) == 1:
-          img = requests.get(f'https://cataas.com/c/{arg[0]}').content
-        else:
-          img = requests.get(f'https://cataas.com/c/{arg[0]}/s/{" ".join(arg[1:])}').content
-  return await bot.send_video(msg.chat.id, img, res, parse_mode = "HTML")
+        req = requests.get(f'https://cataas.com/c/s/{" ".join(arg[1:])}')
+    elif arg[0] == "url":
+      req = requests.get(f'https://cataas.com/c/{" ".join(arg[1:])}')
+    else:
+      if len(arg) == 1:
+        req = requests.get(f'https://cataas.com/c/{arg[0]}')
+      else:
+        req = requests.get(f'https://cataas.com/c/{arg[0]}/s/{" ".join(arg[1:])}')
+  
+  if req.headers.get('Content-Type') == "image/gif":
+    return await bot.send_video(msg.chat.id, req.content, caption=res, parse_mode="HTML")
+  else:
+    return await bot.send_photo(msg.chat.id, req.content, caption=res, parse_mode="HTML")
 
 
 @bot.message_handler(["repeat"])
