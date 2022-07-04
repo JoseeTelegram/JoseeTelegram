@@ -1,5 +1,4 @@
 import asyncio
-import io
 import json
 import logging
 import os
@@ -310,7 +309,7 @@ async def cmd_repeat(msg: types.Message):
 @dp.message_handler()
 async def get_mention(msg: types.Message):
   me = await bot.get_me()
-  if msg.text == me.username:
+  if msg.text == f"@{me.username}":
     await msg.reply("https://github.com/LamberKeep/JoseeTelegram")
 
 
