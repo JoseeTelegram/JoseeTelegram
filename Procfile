@@ -1,0 +1,1 @@
+worker: josee.py
