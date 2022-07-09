@@ -1,1 +1,1 @@
-worker: josee.py
+worker: python josee.py
