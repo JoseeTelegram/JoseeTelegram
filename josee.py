@@ -67,51 +67,59 @@ print("\nBot starting...")
 
 
 @dp.message_handler(commands="coin")
-async def cmd_coin(msg: types.Message):
-  return await msg.reply(f"You get a {['Head', 'Tail'][random.randint(0,1)]}!")
+async def cmd_coin(msg: types.Message) -> None:
+  await msg.reply(f"You get a {['Head', 'Tail'][random.randint(0,1)]}!")
+  return
 
 
 @dp.message_handler(commands="sysfetch")
-async def cmd_sysfetch(msg: types.Message):
+async def cmd_sysfetch(msg: types.Message) -> None:
   up_time = jTime.getReadableTime(round(now() - start_time))
-  return await msg.reply(
+  await msg.reply(
   f"<b>Platform:</b> {platform.system()} {platform.release()}\n"
   f"<b>Architecture:</b> {platform.machine()}\n"
   f"<b>Uptime:</b> {up_time[0]} days {up_time[1]} hours {up_time[2]} mins {up_time[3]} secs\n"
   f"<b>CPU:</b> {round(psutil.cpu_freq()[0]*1000)}/{round(psutil.cpu_freq()[2])} GHz ({round(psutil.cpu_percent())}%)\n"
   f"<b>RAM:</b> {round(psutil.virtual_memory().used / (1024.0 * 2))}/{round(psutil.virtual_memory().total / (1024.0 * 2))} MB ({round(psutil.virtual_memory().percent)}%)\n"
   f"<b>IP:</b> {requests.get('http://icanhazip.com').text.rstrip()}\n", 'HTML')
-
+  return
 
 @dp.message_handler(commands="random")
-async def cmd_random(msg: types.Message):
+async def cmd_random(msg: types.Message) -> None:
   arg = msg.text.split()[1:]
 
   if not arg:
-    return await msg.reply("Usage: /random <start> <end>")
+    await msg.reply("Usage: /random <start> <end>")
+    return
 
   try:
     start = int(arg[0])
     if len(arg) == 1:
-      return await msg.reply(random.randrange(0, start))
+      await msg.reply(random.randrange(0, start))
+      return
     end = int(arg[1])
     if start < end:
-      return await msg.reply(random.randrange(start, end))
+      await msg.reply(random.randrange(start, end))
+      return
     elif start == end:
-      return await msg.reply("Both integers are the same.")
+      await msg.reply("Both integers are the same.")
+      return
     else:
-      return await msg.reply(random.randrange(end, start))
+      await msg.reply(random.randrange(end, start))
+      return
   except ValueError:
-    return await msg.reply(f"One of the arguments isn\'t an integer.")
+    await msg.reply(f"One of the arguments isn\'t an integer.")
+    return
 
 
 @dp.message_handler(commands="8ball")
-async def cmd_8ball(msg: types.Message):
-  return await msg.reply(random.choice(data['8ball']))
+async def cmd_8ball(msg: types.Message) -> None:
+  await msg.reply(random.choice(data['8ball']))
+  return
 
 
 @dp.message_handler(commands="crypto")
-async def cmd_crypto(msg: types.Message):
+async def cmd_crypto(msg: types.Message) -> None:
   answer = await msg.reply('Please wait...')
   res = "*Popular cryptocurrencies*\n"
   for i in data['crypto']:
@@ -123,15 +131,17 @@ async def cmd_crypto(msg: types.Message):
     else: 
       if req['percent_change_usd_last_1_hour']: res += ")"
     res += "\n"
-  return await bot.edit_message_text(res, msg.chat.id, answer.message_id, parse_mode = 'Markdown')
+  await bot.edit_message_text(res, msg.chat.id, answer.message_id, parse_mode = 'Markdown')
+  return
 
 
 @dp.message_handler(commands="rgb")
-async def cmd_rgb(msg: types.Message):
+async def cmd_rgb(msg: types.Message) -> None:
   arg = msg.text.split()[1:]
 
   if not arg:
-    return await msg.reply("Usage: /rgb <r> <g> <b>")
+    await msg.reply("Usage: /rgb <r> <g> <b>")
+    return
 
   r = int(arg[0])
   g = int(arg[1])
@@ -143,7 +153,8 @@ async def cmd_rgb(msg: types.Message):
     file = open(f"cache/{file_name}.png", "rb")
   except Exception as e:
     print(e)
-    return await msg.reply("Error, usage: /rgb <r> <g> <b>")
+    await msg.reply("Error, usage: /rgb <r> <g> <b>")
+    return
 
   await bot.send_photo(msg.chat.id, file,
   f"*RGB:* {r}, {g}, {b}\n"
@@ -157,23 +168,27 @@ async def cmd_rgb(msg: types.Message):
 
 
 @dp.message_handler(commands="cat")
-async def cmd_cat(msg: types.Message):
+async def cmd_cat(msg: types.Message) -> None:
   res = msg.text[5:]
-  if res: return await bot.send_message(msg.chat.id, res)
+  if res: 
+    await bot.send_message(msg.chat.id, res)
+    return
 
 
 @dp.message_handler(commands="remind")
-async def cmd_remind(msg: types.Message):
+async def cmd_remind(msg: types.Message) -> None:
   arg = msg.text.split()[1:]
 
   if not arg:
-    return await msg.reply("Usage: /remind <time> <message>")
+    await msg.reply("Usage: /remind <time> <message>")
+    return
   
   if arg[0].isdigit():
     time = int(arg[0])
   else:
     if not arg[0][0].isdigit():
-      return await msg.reply("Argument doesn't contain a number.")
+      await msg.reply("Argument doesn't contain a number.")
+      return
     for sym in range(0, len(arg[0])):
       if not arg[0][sym].isdigit():
         time = int(arg[0][:sym])
@@ -184,7 +199,8 @@ async def cmd_remind(msg: types.Message):
         elif arg[0][sym:] in ["hour", "h"]:
           time *= 3600
         else:
-          return await msg.reply(f"Argument is not entered in format. Example: 10sec/30min/1hour or 10s/30m/1h.")
+          await msg.reply(f"Argument is not entered in format. Example: 10sec/30min/1hour or 10s/30m/1h.")
+          return
         break
       
   await msg.reply(f"Ugh... fine, I'll remind you in {time} sec.")
@@ -198,55 +214,68 @@ async def cmd_remind(msg: types.Message):
     await bot.send_message(msg.from_user.id,
     f'Remind from <u><a href="https://t.me/{msg.chat.username}">{msg.chat.title}</a></u>.{message}',
     parse_mode="HTML")
-    return await msg.answer(f"@{msg.from_user.username}\nRemind at {ctime(now()-time)}.{message}")
+    await msg.answer(f"@{msg.from_user.username}\nRemind at {ctime(now()-time)}.{message}")
+    return
  
-  return await msg.answer(f"Remind at {ctime(now()-time)}.{message}")
+  await msg.answer(f"Remind at {ctime(now()-time)}.{message}")
+  return
 
 
 @dp.message_handler(commands="note")
-async def cmd_note(msg: types.Message):
+async def cmd_note(msg: types.Message) -> None:
   arg = msg.text.split()[1:]
 
   if not arg:
-    return await msg.reply("Usage: /note <add/list/delete> <note>")
+    await msg.reply("Usage: /note <add/list/delete> <note>")
+    return
   
   if not data['notes'].get(str(msg.chat.id)):
     data['notes'][str(msg.chat.id)] = []
 
   if arg[0] == "add":
     if len(arg) == 1:
-      return await msg.reply("Nothing to note here...")
+      await msg.reply("Nothing to note here...")
+      return
     data['notes'][str(msg.chat.id)].append(" ".join(arg[1:]))
-    return await msg.reply("Note succesfully created.")
+    await msg.reply("Note succesfully created.")
+    return
 
   elif arg[0] == "list":
     if not data['notes'][str(msg.chat.id)]:
-      return await msg.reply("You have no data['notes'], to create new: /note add <note>")
+      await msg.reply("You have no data['notes'], to create new: /note add <note>")
+      return
     answer = "*Note List*\n"
     for i in range(0, len(data['notes'][str(msg.chat.id)])):
       answer += f"{i+1}. {data['notes'][str(msg.chat.id)][i]}\n"
-    return await msg.reply(answer, parse_mode = 'Markdown')
+    await msg.reply(answer, parse_mode = 'Markdown')
+    return
     
   elif arg[0] == "delete":
     if arg[1].isdigit():
       if int(arg[1]) == 0 or int(arg[1])-1 > len(data['notes'][str(msg.chat.id)]):
-        return await msg.reply("That note already doesn't exists.")
+        await msg.reply("That note already doesn't exists.")
+        return
       del data['notes'][str(msg.chat.id)][int(arg[1])-1]
-      return await msg.reply("Note succesfully deleted.")
+      await msg.reply("Note succesfully deleted.")
+      return
     elif arg[1] == "all":
       data['notes'][str(msg.chat.id)].clear()
-      return await msg.reply("All notes was deleted.")
+      await msg.reply("All notes was deleted.")
+      return
     else:
-      return await msg.reply("Usage: /note delete <number/\"all\">")
+      await msg.reply("Usage: /note delete <number/\"all\">")
+      return
 
   else:
-    return await msg.reply("Usage: /note <add/list/delete> <note>")
+    await msg.reply("Usage: /note <add/list/delete> <note>")
+    return
 
 
 @dp.message_handler(commands="pussy")
-async def cmd_pussy(msg: types.Message):
+async def cmd_pussy(msg: types.Message) -> None:
   if requests.get("https://cataas.com").status_code != 200:
-    return await bot.send_photo(msg.chat.id, IMG.open("data/cat.jpg"), "Something went wrong, so I draw this for you, baka!")
+    await bot.send_photo(msg.chat.id, IMG.open("data/cat.jpg"), "Something went wrong, so I draw this for you, baka!")
+    return
 
   arg = msg.text.split()[1:]
   res = "Here, take it, pervert!"
@@ -257,7 +286,7 @@ async def cmd_pussy(msg: types.Message):
       res += " <span class=\"tg-spoiler\">Also try \"pussy help\"!</span>"
   else:
     if arg[0] == "help":
-      return await bot.reply_to(msg,
+      await bot.reply_to(msg,
       "\n\nCat with a text: _/pussy say <text>_"
       "\nCat with a tag: _/pussy <tag>_"
       "\nCat with a tag and text: _/pussy <tag> <text>_"
@@ -265,9 +294,11 @@ async def cmd_pussy(msg: types.Message):
       "\nExample: _/pussy url gif/s/Hello?fi=sepia&c=orange&s=40&t=or_"
       "\n\nAll tags you can find here: [*click me*](https://cataas.com/api/tags)",
       parse_mode = "Markdown")
+      return
     elif arg[0] == "say":
       if len(arg) == 1:
-        return await msg.reply("Nothing was found to say!")
+        await msg.reply("Nothing was found to say!")
+        return
       else:
         req = requests.get(f'https://cataas.com/c/s/{" ".join(arg[1:])}')
     elif arg[0] == "url":
@@ -289,23 +320,27 @@ async def cmd_pussy(msg: types.Message):
     os.remove(f"cache/{file_name}.gif")
     return
   else:
-    return await bot.send_photo(msg.chat.id, req.content, caption=res, parse_mode="HTML")
+    await bot.send_photo(msg.chat.id, req.content, caption=res, parse_mode="HTML")
+    return
 
 
 @dp.message_handler(commands="repeat")
-async def cmd_repeat(msg: types.Message):
+async def cmd_repeat(msg: types.Message) -> None:
   arg = msg.text.split()[1:]  
   
   if not arg:
-    return await msg.reply("Usage: /repeat <count> <message>")
+    await msg.reply("Usage: /repeat <count> <message>")
+    return
 
   try:
     count = int(arg[0])
   except:
-    return await msg.reply("Argument isn't number.")
+    await msg.reply("Argument isn't number.")
+    return
   
   if count < 0:
-    return await msg.reply("Argument isn't positive.")
+    await msg.reply("Argument isn't positive.")
+    return
 
   for _ in range(count):
     await bot.send_message(msg.chat.id, ' '.join(arg[1:]))
@@ -314,7 +349,7 @@ async def cmd_repeat(msg: types.Message):
 
 
 @dp.message_handler()
-async def get_mention(msg: types.Message):
+async def get_mention(msg: types.Message) -> None:
   me = await bot.get_me()
   if msg.text == f"@{me.username}":
     await msg.reply("https://github.com/LamberKeep/JoseeTelegram")
