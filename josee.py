@@ -4,7 +4,8 @@ import logging
 import os
 import platform
 import random
-import time
+from time import ctime
+from time import time as now
 
 import psutil
 import requests
@@ -23,7 +24,7 @@ logging.basicConfig(level=logging._nameToLevel[debug.upper()])
 bot = Bot(token=token)
 dp = Dispatcher(bot)
 
-start_time = time.time()
+start_time = now()
 
 print("Checking data files...")
 files_data = ["8ball.txt", "crypto.json", "notes.json", "cat.jpg"]
@@ -72,7 +73,7 @@ async def cmd_coin(msg: types.Message):
 
 @dp.message_handler(commands="sysfetch")
 async def cmd_sysfetch(msg: types.Message):
-  up_time = jTime.getReadableTime(round(time.time() - start_time))
+  up_time = jTime.getReadableTime(round(now() - start_time))
   return await msg.reply(
   f"<b>Platform:</b> {platform.system()} {platform.release()}\n"
   f"<b>Architecture:</b> {platform.machine()}\n"
@@ -137,7 +138,7 @@ async def cmd_rgb(msg: types.Message):
   b = int(arg[2])
 
   try:
-    file_name = int(time.time())
+    file_name = int(now())
     IMG.new("RGB", (128, 128), (r, g, b)).save(f"cache/{file_name}.png", bitmap_format="png")
     file = open(f"cache/{file_name}.png", "rb")
   except Exception as e:
@@ -169,31 +170,37 @@ async def cmd_remind(msg: types.Message):
     return await msg.reply("Usage: /remind <time> <message>")
   
   if arg[0].isdigit():
-    time = arg[0]
+    time = int(arg[0])
   else:
     if not arg[0][0].isdigit():
       return await msg.reply("Argument doesn't contain a number.")
     for sym in range(0, len(arg[0])):
       if not arg[0][sym].isdigit():
         time = int(arg[0][:sym])
-        if arg[0][sym:] == "sec" or arg[0][sym:] == "s":
+        if arg[0][sym:] in ["sec", "s"]:
           pass
-        elif arg[0][sym:] == "min" or arg[0][sym:] == "m":
+        elif arg[0][sym:] in ["min", "m"]:
           time *= 60
-        elif arg[0][sym:] == "hour" or arg[0][sym:] == "h":
+        elif arg[0][sym:] in ["hour", "h"]:
           time *= 3600
         else:
           return await msg.reply(f"Argument is not entered in format. Example: 10sec/30min/1hour or 10s/30m/1h.")
         break
       
-  await msg.reply(f"Ugh... fine, I'll remind you in {time} seconds.")
+  await msg.reply(f"Ugh... fine, I'll remind you in {time} sec.")
   await asyncio.sleep(time)
   
-  if msg.from_user.id != msg.chat.id:
-    # await bot.forward_message(msg.from_user.id, msg.chat.id, msg.id) # send pm
-    return await bot.send_message(msg.chat.id, f"@{msg.from_user.username}, remind: {' '.join(arg[1:])}")
+  message = ""
+  if len(arg) > 1:
+    message = f"\nMessage: \"{' '.join(arg[1:])}\""
+
+  if msg.chat.type == "supergroup":
+    await bot.send_message(msg.from_user.id,
+    f'Remind from <u><a href="https://t.me/{msg.chat.username}">{msg.chat.title}</a></u>.{message}',
+    parse_mode="HTML")
+    return await msg.answer(f"@{msg.from_user.username}\nRemind at {ctime(now()-time)}.{message}")
  
-  return await bot.send_message(msg.chat.id, f"Remind: {' '.join(arg[1:])}")
+  return await msg.answer(f"Remind at {ctime(now()-time)}.{message}")
 
 
 @dp.message_handler(commands="note")
@@ -272,7 +279,7 @@ async def cmd_pussy(msg: types.Message):
         req = requests.get(f'https://cataas.com/c/{arg[0]}/s/{" ".join(arg[1:])}')
   
   if req.headers.get('Content-Type') == "image/gif":
-    file_name = int(time.time())
+    file_name = int(now())
     file = open(f"cache/{file_name}.gif", "wb")
     file.write(req.content)
     file.close()
