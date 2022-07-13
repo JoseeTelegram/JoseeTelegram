@@ -10,5 +10,11 @@ token = os.environ["ACCESS_TOKEN"] # for heroku
 id = os.environ["MY_ID"] # for heroku
 # id = 0 # for local
 
+# Checks the current version of the bot with the version on github.
+check_version = True
+
+# Checks data files and downloads them if they are not found.
+check_data = False
+
 # Debug levels: "DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL".
 debug = "WARNING"
