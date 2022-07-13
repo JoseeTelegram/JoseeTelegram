@@ -22,7 +22,7 @@ async def cmd_note(msg: types.Message) -> None:
 
   elif arg[0] == "list":
     if not data['notes'][str(msg.chat.id)]:
-      await msg.reply("You have no data['notes'], to create new: /note add <note>")
+      await msg.reply("You have no notes, to create new: /note add <note>")
       return
     answer = "*Note List*\n"
     for i in range(0, len(data['notes'][str(msg.chat.id)])):
