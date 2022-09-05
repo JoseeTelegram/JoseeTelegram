@@ -4,13 +4,13 @@ from time import time
 
 import requests
 from aiogram import types
-from josee import tg_bot
+from josee import bot
 from PIL import Image as IMG
 
 
 async def cmd_pussy(msg: types.Message) -> None:
   if requests.get("https://cataas.com").status_code != 200:
-    await tg_bot.send_photo(msg.chat.id, IMG.open("data/cat.jpg"), "Something went wrong, so I draw this for you, baka!")
+    await bot.send_photo(msg.chat.id, IMG.open("data/cat.jpg"), "Something went wrong, so I draw this for you, baka!")
     return
 
   arg = msg.text.split()[1:]
@@ -22,7 +22,7 @@ async def cmd_pussy(msg: types.Message) -> None:
       res += " <span class=\"tg-spoiler\">Also try \"pussy help\"!</span>"
   else:
     if arg[0] == "help":
-      await tg_bot.reply_to(msg,
+      await bot.reply_to(msg,
       "\n\nCat with a text: _/pussy say <text>_"
       "\nCat with a tag: _/pussy <tag>_"
       "\nCat with a tag and text: _/pussy <tag> <text>_"
@@ -51,10 +51,10 @@ async def cmd_pussy(msg: types.Message) -> None:
     file.write(req.content)
     file.close()
     file = open(f"cache/{file_name}.gif", "rb")
-    await tg_bot.send_animation(msg.chat.id, file, caption=res, parse_mode="HTML")
+    await bot.send_animation(msg.chat.id, file, caption=res, parse_mode="HTML")
     file.close()
     os.remove(f"cache/{file_name}.gif")
     return
   else:
-    await tg_bot.send_photo(msg.chat.id, req.content, caption=res, parse_mode="HTML")
+    await bot.send_photo(msg.chat.id, req.content, caption=res, parse_mode="HTML")
     return
