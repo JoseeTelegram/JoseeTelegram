@@ -3,7 +3,7 @@ import os
 from time import time
 
 from aiogram import types
-from josee import tg_bot
+from josee import bot
 from PIL import Image as IMG
 
 
@@ -20,21 +20,21 @@ async def cmd_rgb(msg: types.Message) -> None:
 
   try:
     file_name = int(time())
-    IMG.new("RGB", (128, 128), (r, g, b)).save(f"cache/{file_name}.png", bitmap_format="png")
-    file = open(f"cache/{file_name}.png", "rb")
+    IMG.new("RGB", (128, 128), (r, g, b)).save(f"tg_bot/cache/{file_name}.png", bitmap_format="png")
+    file = open(f"tg_bot/cache/{file_name}.png", "rb")
   except Exception as e:
     print(e)
     await msg.reply("Error, usage: /rgb <r> <g> <b>")
     return
 
-  await tg_bot.send_photo(msg.chat.id, file,
+  await bot.send_photo(msg.chat.id, file,
   f"*RGB:* {r}, {g}, {b}\n"
   f"*HEX:* #{''.join(str(i) for i in rgb2hex(r, g, b))}\n"
   f"*HSV:* {', '.join(str(round(i)) for i in rgb2hsv(r, g, b))}\n"
   f"*CMYK:* {', '.join(str(round(i)) for i in rgb2cmyk(r, g, b))}\n",
   parse_mode = "Markdown")
 
-  os.remove(f"cache/{file_name}.png")
+  os.remove(f"tg_bot/cache/{file_name}.png")
   return file.close()
 
 

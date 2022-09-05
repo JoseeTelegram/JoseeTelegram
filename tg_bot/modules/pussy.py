@@ -22,7 +22,7 @@ async def cmd_pussy(msg: types.Message) -> None:
       res += " <span class=\"tg-spoiler\">Also try \"pussy help\"!</span>"
   else:
     if arg[0] == "help":
-      await bot.reply_to(msg,
+      await msg.reply(
       "\n\nCat with a text: _/pussy say <text>_"
       "\nCat with a tag: _/pussy <tag>_"
       "\nCat with a tag and text: _/pussy <tag> <text>_"

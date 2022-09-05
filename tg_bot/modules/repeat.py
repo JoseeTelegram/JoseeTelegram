@@ -1,5 +1,5 @@
 from aiogram import types
-from josee import tg_bot
+from josee import bot
 
 
 async def cmd_repeat(msg: types.Message) -> None:
@@ -20,5 +20,5 @@ async def cmd_repeat(msg: types.Message) -> None:
     return
 
   for _ in range(count):
-    await tg_bot.send_message(msg.chat.id, ' '.join(arg[1:]))
+    await bot.send_message(msg.chat.id, ' '.join(arg[1:]))
   return
