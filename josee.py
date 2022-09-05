@@ -1,28 +1,27 @@
 import atexit
 import json
 import logging
+import os
 from time import time
 
 from aiogram import Bot, Dispatcher, executor
 
-from modules.__main__ import startup
+import bot
 from settings import *
-from utils.check_files import check_files
-from utils.check_updates import check_updates
-
-# Configure logging
-logging.basicConfig(level=logging._nameToLevel[debug.upper()])
-
-# Initialize bot and dispatcher
-bot = Bot(token=token)
-dp = Dispatcher(bot)
 
 start_time = time()
 
+# Configure logging
+logging.basicConfig(level = logging._nameToLevel[debug.upper()])
+
+# Initialize bot and dispatcher
+tg_bot = Bot(token = token)
+dp = Dispatcher(tg_bot)
+
 data = {}
-files_dir = os.listdir("data")
+files_dir = os.listdir("bot/data")
 for i in files_dir:
-  file = open(f"data/{i}", "r")
+  file = open(f"bot/data/{i}", "r")
   file_name = i[:i.find('.')]
   file_format = i[i.find('.')+1:]
   if file_format == "txt":
@@ -35,13 +34,12 @@ del files_dir
 
 @atexit.register
 def onExit():
-  f = open('data/notes.json', 'w')
+  f = open('bot/data/notes.json', 'w')
   json.dump(data['notes'], f)
   f.close()
 
 if __name__ == '__main__':
-  if check_version: check_updates()
-  if check_data: check_files()
-  print("\nBot starting...")
-  executor.start_polling(dp, on_startup=startup, skip_updates=True)
+  # if check_version: check_updates()
+  # if check_data: check_files()
+  executor.start_polling(dp, on_startup = bot.startup, skip_updates = True)
   

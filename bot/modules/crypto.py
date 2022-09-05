@@ -1,7 +1,8 @@
+import math
+
 import requests
 from aiogram import types
 from josee import data
-from libs.round import RoundTo
 
 
 async def cmd_crypto(msg: types.Message) -> None:
@@ -18,3 +19,9 @@ async def cmd_crypto(msg: types.Message) -> None:
     res += "\n"
   await msg.bot.edit_message_text(res, msg.chat.id, answer.message_id, parse_mode = 'Markdown')
   return
+
+def RoundTo(num, digits=2):
+  if num == 0: return 0
+  scale = int(-math.floor(math.log10(abs(num - int(num))))) + digits - 1
+  if scale < digits: scale = digits
+  return round(num, scale)
