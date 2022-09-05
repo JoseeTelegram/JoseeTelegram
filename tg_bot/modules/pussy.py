@@ -47,13 +47,13 @@ async def cmd_pussy(msg: types.Message) -> None:
   
   if req.headers.get('Content-Type') == "image/gif":
     file_name = int(time())
-    file = open(f"cache/{file_name}.gif", "wb")
+    file = open(f"tg_bot/cache/{file_name}.gif", "wb")
     file.write(req.content)
     file.close()
-    file = open(f"cache/{file_name}.gif", "rb")
+    file = open(f"tg_bot/cache/{file_name}.gif", "rb")
     await bot.send_animation(msg.chat.id, file, caption=res, parse_mode="HTML")
     file.close()
-    os.remove(f"cache/{file_name}.gif")
+    os.remove(f"tg_bot/cache/{file_name}.gif")
     return
   else:
     await bot.send_photo(msg.chat.id, req.content, caption=res, parse_mode="HTML")
