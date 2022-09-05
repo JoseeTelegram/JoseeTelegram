@@ -3,7 +3,7 @@ from time import ctime
 from time import time as now
 
 from aiogram import types
-from josee import bot
+from josee import tg_bot
 
 
 async def cmd_remind(msg: types.Message) -> None:
@@ -41,7 +41,7 @@ async def cmd_remind(msg: types.Message) -> None:
     message = f"\nMessage: \"{' '.join(arg[1:])}\""
 
   if msg.chat.type == "supergroup":
-    await bot.send_message(msg.from_user.id,
+    await tg_bot.send_message(msg.from_user.id,
     f'Remind from <u><a href="https://t.me/{msg.chat.username}">{msg.chat.title}</a></u>.{message}',
     parse_mode="HTML")
     await msg.answer(f"@{msg.from_user.username}\nRemind at {ctime(now()-time)}.{message}")

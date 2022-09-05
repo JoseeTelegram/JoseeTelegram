@@ -1,6 +1,6 @@
 from aiogram import Dispatcher
 
-from bot import modules
+from tg_bot import modules
 
 
 async def startup(dispatcher: Dispatcher):

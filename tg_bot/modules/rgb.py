@@ -3,7 +3,7 @@ import os
 from time import time
 
 from aiogram import types
-from josee import bot
+from josee import tg_bot
 from PIL import Image as IMG
 
 
@@ -27,7 +27,7 @@ async def cmd_rgb(msg: types.Message) -> None:
     await msg.reply("Error, usage: /rgb <r> <g> <b>")
     return
 
-  await bot.send_photo(msg.chat.id, file,
+  await tg_bot.send_photo(msg.chat.id, file,
   f"*RGB:* {r}, {g}, {b}\n"
   f"*HEX:* #{''.join(str(i) for i in rgb2hex(r, g, b))}\n"
   f"*HSV:* {', '.join(str(round(i)) for i in rgb2hsv(r, g, b))}\n"
