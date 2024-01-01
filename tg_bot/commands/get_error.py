@@ -1,7 +1,7 @@
 import logging
 from time import ctime, time
 
-from josee import bot
+from aiogram import bot
 from settings import id
 
 

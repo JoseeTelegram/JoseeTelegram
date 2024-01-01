@@ -1,5 +1,4 @@
-from aiogram import types
-from josee import bot
+from aiogram import bot, types
 
 
 async def get_mention(msg: types.Message) -> None:

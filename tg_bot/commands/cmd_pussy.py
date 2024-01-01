@@ -3,18 +3,17 @@ import random
 from time import time
 
 import requests
-from aiogram import types
-from josee import bot
+from aiogram import bot, types
 from PIL import Image as IMG
 
 
 async def cmd_pussy(msg: types.Message) -> None:
   if requests.get("https://cataas.com").status_code != 200:
-    await bot.send_photo(msg.chat.id, IMG.open("data/cat.jpg"), "Something went wrong, so I draw this for you, baka!")
+    await bot.send_message(msg.chat.id, "Something went wrong, we'll be fix this! 😸")
     return
 
   arg = msg.text.split()[1:]
-  res = "Here, take it, pervert!"
+  res = "Here, take it, pervert! 😻"
 
   if not arg:
     req = requests.get('https://cataas.com/c')
