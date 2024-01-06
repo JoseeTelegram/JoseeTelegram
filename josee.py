@@ -7,19 +7,19 @@ import tg_bot
 from settings import *
 
 if __name__ == "__main__":
-  # Configure logging
-  logging.basicConfig(level = logging._nameToLevel[debug.upper()])
+    # Configure logging
+    logging.basicConfig(level=logging._nameToLevel[debug.upper()])
 
-  # Initialize modules
-  modules = []
-  # modules.append(multiprocessing.Process(target=crypto))
+    # Initialize modules
+    modules = []
+    # modules.append(multiprocessing.Process(target=crypto))
 
-  # Starting modules
-  for i in modules: i.start() 
+    # Starting modules
+    for i in modules: i.start()
 
-  # Initialize bot and dispatcher
-  bot = Bot(token = token)
-  dp = Dispatcher(bot)
+    # Initialize bot and dispatcher
+    bot = Bot(token=token)
+    dp = Dispatcher(bot)
 
-  # Start polling bot
-  executor.start_polling(dp, on_startup = tg_bot.startup, skip_updates = True)
+    # Start polling bot
+    executor.start_polling(dp, on_startup=tg_bot.startup, skip_updates=True)
