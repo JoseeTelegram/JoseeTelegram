@@ -13,17 +13,17 @@ async def cmd_random(msg: types.Message) -> None:
     try:
         start = int(arg[0])
         if len(arg) == 1:
-            await msg.reply(random.randrange(0, start))
+            await msg.reply(str(random.randrange(0, start)))
             return
         end = int(arg[1])
         if start < end:
-            await msg.reply(random.randrange(start, end))
+            await msg.reply(str(random.randrange(start, end)))
             return
         elif start == end:
             await msg.reply("Both integers are the same.")
             return
         else:
-            await msg.reply(random.randrange(end, start))
+            await msg.reply(str(random.randrange(end, start)))
             return
     except ValueError:
         await msg.reply(f"One of the arguments isn\'t an integer.")

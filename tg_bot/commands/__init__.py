@@ -3,6 +3,7 @@ from aiogram import Dispatcher
 from .cmd_cat import cmd_cat
 from .cmd_coin import cmd_coin
 from .cmd_crypto import cmd_crypto
+from .cmd_dice import cmd_dice
 from .cmd_eightball import cmd_8ball
 from .cmd_note import cmd_note
 from .cmd_pussy import cmd_pussy
@@ -20,6 +21,7 @@ def setup(dp: Dispatcher):
     dp.register_message_handler(cmd_cat, commands="cat")
     dp.register_message_handler(cmd_coin, commands="coin")
     dp.register_message_handler(cmd_crypto, commands="crypto")
+    dp.register_message_handler(cmd_dice, commands="dice")
     dp.register_message_handler(cmd_8ball, commands="8ball")
     dp.register_message_handler(cmd_note, commands="note")
     dp.register_message_handler(cmd_pussy, commands="pussy")

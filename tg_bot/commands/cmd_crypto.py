@@ -12,7 +12,8 @@ async def cmd_crypto(msg: types.Message) -> None:
         # print("Requesting:", i) # debug
         req = requests.get(f'https://data.messari.io/api/v1/assets/{i}/metrics').json()['data']['market_data']
         res += f"*{crypto[i]['name']} ({crypto[i]['short-name']})* - ${RoundTo(req['price_usd'])}"
-        if req['percent_change_usd_last_1_hour']:   res += f" (1h: {RoundTo(req['percent_change_usd_last_1_hour'])}%"
+        if req['percent_change_usd_last_1_hour']:
+            res += f" (1h: {RoundTo(req['percent_change_usd_last_1_hour'])}%"
         if req['percent_change_usd_last_24_hours']:
             res += f" 24h: {RoundTo(req['percent_change_usd_last_24_hours'])}%)"
         else:

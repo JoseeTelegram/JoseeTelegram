@@ -4,15 +4,16 @@ from time import time
 
 import requests
 from aiogram import bot, types
+from aiogram.utils.emoji import emojize
 
 
 async def cmd_pussy(msg: types.Message) -> None:
     if requests.get("https://cataas.com").status_code != 200:
-        await bot.send_message(msg.chat.id, "Something went wrong, we'll be fix this! 😸")
+        await msg.reply(emojize("Something went wrong, we'll be fix this! :crying_cat_face:"))
         return
 
     arg = msg.text.split()[1:]
-    res = "Here, take it, pervert! 😻"
+    res = "Here, take it, pervert! :heart_eyes_cat:"
 
     if not arg:
         req = requests.get('https://cataas.com/c')
@@ -49,10 +50,10 @@ async def cmd_pussy(msg: types.Message) -> None:
         file.write(req.content)
         file.close()
         file = open(f"tg_bot/cache/{file_name}.gif", "rb")
-        await bot.send_animation(msg.chat.id, file, caption=res, parse_mode="HTML")
+        await bot.Bot.send_animation(msg.chat.id, file, caption=res, parse_mode="HTML")
         file.close()
         os.remove(f"tg_bot/cache/{file_name}.gif")
         return
     else:
-        await bot.send_photo(msg.chat.id, req.content, caption=res, parse_mode="HTML")
+        await bot.Bot.send_photo(msg.chat.id, req.content, caption=res, parse_mode="HTML")
         return

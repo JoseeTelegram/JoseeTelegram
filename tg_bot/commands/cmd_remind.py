@@ -3,10 +3,12 @@ from time import ctime
 from time import time as now
 
 from aiogram import types
+
 from josee import tg_bot
 
 
 async def cmd_remind(msg: types.Message) -> None:
+    global time
     arg = msg.text.split()[1:]
 
     if not arg:

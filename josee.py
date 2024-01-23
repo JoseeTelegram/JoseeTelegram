@@ -1,5 +1,4 @@
 import logging
-import multiprocessing
 
 from aiogram import Bot, Dispatcher, executor
 
@@ -8,14 +7,14 @@ from settings import *
 
 if __name__ == "__main__":
     # Configure logging
-    logging.basicConfig(level=logging._nameToLevel[debug.upper()])
+    logging.basicConfig(level=logging.getLevelName(debug.upper()))
 
     # Initialize modules
     modules = []
-    # modules.append(multiprocessing.Process(target=crypto))
 
     # Starting modules
-    for i in modules: i.start()
+    for i in modules:
+        i.start()
 
     # Initialize bot and dispatcher
     bot = Bot(token=token)
