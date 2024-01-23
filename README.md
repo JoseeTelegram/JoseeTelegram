@@ -39,6 +39,5 @@ git clone https://github.com/LamberKeep/JoseeTelegram;
 cd JoseeTelegram;
 docker build --tag 'josee' .;
 docker run -e JOSEE_ACCESS_TOKEN=<bot_token> \
- -e JOSEE_MY_ID=<your_id> \
  --name josee josee:latest
 ```
