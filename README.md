@@ -7,6 +7,7 @@
 - ``8ball`` - Experiences your future with a magic ball
 - ``cat`` - Repeats your message
 - ``coin`` - Flips a coin
+- ``dice`` - Throws the dice
 - ``crypto`` - Displays the value of the most popular cryptocurrencies
 - ``note`` - Allows to use notes in telegram
 - ``pussy`` - Did you really want to see that?
