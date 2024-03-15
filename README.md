@@ -1,4 +1,4 @@
-# Josee: Telegram Bot
+# JoseeTelegram - Telegram Bot
 
 ![josee_yamamura](https://wallpapercave.com/wp/wp9333917.jpg)
 
