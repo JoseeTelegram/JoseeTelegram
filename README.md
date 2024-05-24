@@ -38,6 +38,6 @@ To create image and start container, edit and run this script:
 git clone https://github.com/LamberKeep/JoseeTelegram;
 cd JoseeTelegram;
 docker build --tag 'josee' .;
-docker run -e JOSEE_ACCESS_TOKEN=<bot_token> \
+docker run -e BOT_TOKEN=<bot_token> \
  --name josee josee:latest
 ```
