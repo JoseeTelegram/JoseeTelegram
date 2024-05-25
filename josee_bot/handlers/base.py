@@ -17,7 +17,7 @@ from aiogram.types import Message, URLInputFile
 from loguru import logger
 from translatepy import Translator
 
-from josee_bot import EIGHT_BALL
+from josee_bot import EIGHT_BALL, CRYPTO
 from josee_bot.misc import dp
 
 
@@ -50,31 +50,29 @@ async def cmd_coin(msg: Message) -> None:
 
 @dp.message(Command("crypto"))
 async def cmd_crypto(msg: Message) -> None:
-    answer = await msg.reply('Please wait...')
-    res = "*Popular cryptocurrencies*\n"
-    crypto = open("tg_bot/data/crypto.json", "r").read().json()
-    for i in crypto:
-        # print("Requesting:", i) # debug
-        req = requests.get(f'https://data.messari.io/api/v1/assets/{i}/metrics').json()['data']['market_data']
-        res += f"*{crypto[i]['name']} ({crypto[i]['short-name']})* - ${RoundTo(req['price_usd'])}"
-        if req['percent_change_usd_last_1_hour']:
-            res += f" (1h: {RoundTo(req['percent_change_usd_last_1_hour'])}%"
-        if req['percent_change_usd_last_24_hours']:
-            res += f" 24h: {RoundTo(req['percent_change_usd_last_24_hours'])}%)"
-        else:
-            if req['percent_change_usd_last_1_hour']: res += ")"
-        res += "\n"
-    await msg.bot.edit_message_text(res, msg.chat.id, answer.message_id, parse_mode='Markdown')
-    return
+    request = requests.get("https://bitpay.com/api/rates")
+
+    if request.status_code != 200 or request.headers.get("Content-Type") != "application/json; charset=utf-8":
+        await msg.reply("The service is currently unavailable, please try again later.")
+        return
+
+    response = request.json()
+    result = "*Cryptocurrency rates*"
+
+    usd_price = float(filter_crypto_rate(response, "USD")['rate'])  # BTC price in USD
+
+    for i in CRYPTO:
+        code = i.strip("\n")
+        crypto = filter_crypto_rate(response, code)
+        result += f"\n{crypto['name']} ({code}) - {round(usd_price / float(crypto['rate']), 3)} $"
+
+    await msg.reply(result, parse_mode='Markdown')
 
 
-def RoundTo(num, digits=2):
-    if num == 0:
-        return 0
-    scale = int(-math.floor(math.log10(abs(num - int(num))))) + digits - 1
-    if scale < digits:
-        scale = digits
-    return round(num, scale)
+def filter_crypto_rate(crypto_rates: list, name: str) -> dict | None:
+    for crypto_rate in crypto_rates:
+        if crypto_rate["code"] == name.upper():
+            return crypto_rate
 
 
 @dp.message(Command("dice"))
