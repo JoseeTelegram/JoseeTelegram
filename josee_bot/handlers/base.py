@@ -81,7 +81,7 @@ async def cmd_dice(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
-        await msg.reply("Usage: /dice <edges> <number>")
+        await msg.reply("Usage: /dice <edges> <number>", parse_mode="markdown")
         return
 
     nDice = 1
@@ -133,7 +133,7 @@ async def cmd_note(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
-        await msg.reply("Usage: /note <add/list/delete> <note>")
+        await msg.reply("Usage: /note <add/list/delete> <note>", parse_mode="markdown")
         return
 
     notes = open("tg_bot/data/notes.json", "r+")
@@ -172,11 +172,11 @@ async def cmd_note(msg: Message) -> None:
             await msg.reply("All notes was deleted.")
             return
         else:
-            await msg.reply("Usage: /note delete <number/\"all\">")
+            await msg.reply("Usage: /note delete <number/\"all\">", parse_mode="markdown")
             return
 
     else:
-        await msg.reply("Usage: /note <add/list/delete> <note>")
+        await msg.reply("Usage: /note <add/list/delete> <note>", parse_mode="markdown")
         return
 
 
@@ -238,7 +238,7 @@ async def cmd_random(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
-        await msg.reply("Usage: /random <start> <end>")
+        await msg.reply("Usage: /random <start> <end>", parse_mode="markdown")
     try:
         start = int(arg[0])
         if len(arg) == 1:
@@ -265,7 +265,7 @@ async def cmd_remind(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
-        await msg.reply("Usage: /remind <time> <message>")
+        await msg.reply("Usage: /remind <time> <message>", parse_mode="markdown")
         return
 
     if arg[0].isdigit():
@@ -311,7 +311,7 @@ async def cmd_repeat(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
-        await msg.reply("Usage: /repeat <count> <message>")
+        await msg.reply("Usage: /repeat <count> <message>", parse_mode="markdown")
         return
 
     try:
@@ -334,7 +334,7 @@ async def cmd_rgb(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
-        await msg.reply("Usage: /rgb <r> <g> <b>")
+        await msg.reply("Usage: /rgb <r> <g> <b>", parse_mode="markdown")
         return
 
     r = int(arg[0])
@@ -351,7 +351,7 @@ async def cmd_rgb(msg: Message) -> None:
         file = open(f"tg_bot/cache/{file_name}.png", "rb")
     except Exception as e:
         print(e)
-        await msg.reply("Error, usage: /rgb <r> <g> <b>")
+        await msg.reply("Usage: /rgb <r> <g> <b>", parse_mode="markdown")
         return
 
     await bot.send_photo(msg.chat.id, file,
@@ -452,7 +452,7 @@ async def cmd_translate(msg: Message) -> None:
     args = msg.text.split()
 
     if len(args) <= 1:
-        await msg.reply("Usage: /translate <language> <message>\nOn reply: /translate <language>")
+        await msg.reply("Usage: /translate <language> <message>\nOn reply: /translate <language>", parse_mode="markdown")
         return
 
     lang = args[1]
