@@ -10,7 +10,7 @@
 * ``dice`` - Throws the dice
 * ``crypto`` - Displays the value of the most popular cryptocurrencies
 * ``note`` - Allows to use notes in telegram
-* ``pussy`` - Did you really want to see that?
+* ``cat`` - Sends a random cat picture
 * ``random`` - Returns a random number from one to argument
 * ``remind`` - Reminds you of your message from the past
 * ``repeat`` - Repeats the message

@@ -178,28 +178,24 @@ async def cmd_note(msg: Message) -> None:
         await msg.reply("Usage: /note <add/list/delete> <note>", parse_mode="markdown")
 
 
-@dp.message(Command("pussy"))
-async def cmd_pussy(msg: Message) -> None:
+@dp.message(Command("cat"))
+async def cmd_cat(msg: Message) -> None:
     if requests.get("https://cataas.com").status_code != 200:
         await msg.reply(emoji.emojize("Something went wrong, we'll be fix this! :crying_cat_face:", language="alias"))
         return
 
     arg = msg.text.split()[1:]
-    res = "Here, take it, pervert! :heart_eyes_cat:"
 
     if not arg:
         req = requests.get('https://cataas.com/c')
-
-        if random.random() <= 0.25:
-            res += " <span class=\"tg-spoiler\">Also try \"pussy help\"!</span>"
     else:
         if arg[0] == "help":
             await msg.reply(
-                "\n\nCat with a text: _/pussy say <text>_"
-                "\nCat with a tag: _/pussy <tag>_"
-                "\nCat with a tag and text: _/pussy <tag> <text>_"
-                "\n\nYou also can use advanced options by url: _/pussy url <url>_"
-                "\nExample: _/pussy url gif/s/Hello?fi=sepia&c=orange&s=40&t=or_"
+                "\n\nCat with a text: _/cat say <text>_"
+                "\nCat with a tag: _/cat <tag>_"
+                "\nCat with a tag and text: _/cat <tag> <text>_"
+                "\n\nYou also can use advanced options by url: _/cat url <url>_"
+                "\nExample: _/cat url gif/s/Hello?fi=sepia&c=orange&s=40&t=or_"
                 "\n\nAll tags you can find here: [*click me*](https://cataas.com/api/tags)",
                 parse_mode="Markdown")
             return
@@ -222,12 +218,12 @@ async def cmd_pussy(msg: Message) -> None:
         file.write(req.content)
         file.close()
         file = open(f"tg_bot/cache/{file_name}.gif", "rb")
-        await bot.Bot.send_animation(msg.chat.id, file, caption=res, parse_mode="HTML")
+        await bot.Bot.send_animation(msg.chat.id, file, parse_mode="HTML")
         file.close()
         os.remove(f"tg_bot/cache/{file_name}.gif")
         return
     else:
-        await bot.Bot.send_photo(msg.chat.id, req.content, caption=res, parse_mode="HTML")
+        await bot.Bot.send_photo(msg.chat.id, req.content, parse_mode="HTML")
         return
 
 
