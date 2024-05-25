@@ -17,6 +17,7 @@ from aiogram.types import Message, URLInputFile
 from loguru import logger
 from translatepy import Translator
 
+from josee_bot import EIGHT_BALL
 from josee_bot.misc import dp
 
 
@@ -113,16 +114,7 @@ async def cmd_dice(msg: Message) -> None:
 
 @dp.message(Command("8ball"))
 async def cmd_8ball(msg: Message) -> None:
-    await msg.reply(random.choice(["Without a doubt.",
-                                   "As I see it yes.",
-                                   "Outlook not so good.",
-                                   "Reply hazy ask again.",
-                                   "Most likely.",
-                                   "Ask again later.",
-                                   "Don't count on it.",
-                                   "Signs point to yes.",
-                                   "My sources say no."]))
-    return
+    await msg.reply(random.choice(EIGHT_BALL))
 
 
 note = {}
