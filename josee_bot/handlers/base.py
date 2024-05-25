@@ -325,7 +325,7 @@ async def cmd_repeat(msg: Message) -> None:
         return
 
     for _ in range(count):
-        await bot.Bot.send_message(msg.chat.id, ' '.join(arg[1:]))
+        await msg.answer(' '.join(arg[1:]))
     return
 
 
