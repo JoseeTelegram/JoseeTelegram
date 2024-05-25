@@ -211,11 +211,10 @@ async def cmd_pussy(msg: Message) -> None:
                 req = requests.get(f'https://cataas.com/c/s/{" ".join(arg[1:])}')
         elif arg[0] == "url":
             req = requests.get(f'https://cataas.com/c/{" ".join(arg[1:])}')
+        elif len(arg) == 1:
+            req = requests.get(f'https://cataas.com/c/{arg[0]}')
         else:
-            if len(arg) == 1:
-                req = requests.get(f'https://cataas.com/c/{arg[0]}')
-            else:
-                req = requests.get(f'https://cataas.com/c/{arg[0]}/s/{" ".join(arg[1:])}')
+            req = requests.get(f'https://cataas.com/c/{arg[0]}/s/{" ".join(arg[1:])}')
 
     if req.headers.get('Content-Type') == "image/gif":
         file_name = int(time())
