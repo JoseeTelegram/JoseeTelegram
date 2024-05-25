@@ -13,7 +13,7 @@ from PIL import Image as IMG
 from aiogram import Bot, html
 from aiogram.client import bot
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message
+from aiogram.types import Message, URLInputFile
 from loguru import logger
 from translatepy import Translator
 
@@ -180,51 +180,30 @@ async def cmd_note(msg: Message) -> None:
 
 @dp.message(Command("cat"))
 async def cmd_cat(msg: Message) -> None:
-    if requests.get("https://cataas.com").status_code != 200:
-        await msg.reply(emoji.emojize("Something went wrong, we'll be fix this! :crying_cat_face:", language="alias"))
-        return
+    request = requests.get('https://cataas.com/cat?json=true')  # Get a random cat
 
-    arg = msg.text.split()[1:]
+    if request.status_code == 200 and request.headers.get("Content-Type") == "application/json; charset=utf-8":
+        response = request.json()
+        cat_id = response["_id"]
+        cat_mimetype = response["mimetype"].split("/")[-1]
 
-    if not arg:
-        req = requests.get('https://cataas.com/c')
-    else:
-        if arg[0] == "help":
-            await msg.reply(
-                "\n\nCat with a text: _/cat say <text>_"
-                "\nCat with a tag: _/cat <tag>_"
-                "\nCat with a tag and text: _/cat <tag> <text>_"
-                "\n\nYou also can use advanced options by url: _/cat url <url>_"
-                "\nExample: _/cat url gif/s/Hello?fi=sepia&c=orange&s=40&t=or_"
-                "\n\nAll tags you can find here: [*click me*](https://cataas.com/api/tags)",
-                parse_mode="Markdown")
-            return
-        elif arg[0] == "say":
-            if len(arg) == 1:
-                await msg.reply("Nothing was found to say!")
-                return
+        if cat_id and cat_mimetype:
+            cat_filename = cat_id + "." + cat_mimetype
+
+            if cat_mimetype == "jpeg" or cat_mimetype == "png":
+                await msg.reply_photo(
+                    photo=URLInputFile(f"https://cataas.com/cat/{cat_id}", filename=cat_filename))
+            elif cat_mimetype == "gif":
+                await msg.reply_animation(
+                    animation=URLInputFile(f"https://cataas.com/cat/{cat_id}", filename=cat_filename))
             else:
-                req = requests.get(f'https://cataas.com/c/s/{" ".join(arg[1:])}')
-        elif arg[0] == "url":
-            req = requests.get(f'https://cataas.com/c/{" ".join(arg[1:])}')
-        elif len(arg) == 1:
-            req = requests.get(f'https://cataas.com/c/{arg[0]}')
-        else:
-            req = requests.get(f'https://cataas.com/c/{arg[0]}/s/{" ".join(arg[1:])}')
+                await msg.reply_document(
+                    document=URLInputFile(f"https://cataas.com/cat/{cat_id}", filename=cat_filename))
 
-    if req.headers.get('Content-Type') == "image/gif":
-        file_name = int(time())
-        file = open(f"tg_bot/cache/{file_name}.gif", "wb")
-        file.write(req.content)
-        file.close()
-        file = open(f"tg_bot/cache/{file_name}.gif", "rb")
-        await bot.Bot.send_animation(msg.chat.id, file, parse_mode="HTML")
-        file.close()
-        os.remove(f"tg_bot/cache/{file_name}.gif")
-        return
-    else:
-        await bot.Bot.send_photo(msg.chat.id, req.content, parse_mode="HTML")
-        return
+            return
+
+    await msg.reply(emoji.emojize("Ops! Oh! Something went wrong, please try again later :crying_cat_face:",
+                                  language="alias"))
 
 
 @dp.message(Command("random"))
