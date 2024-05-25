@@ -10,7 +10,7 @@ import emoji
 import psutil
 import requests
 from PIL import Image as IMG
-from aiogram import Bot, html, types
+from aiogram import Bot, html
 from aiogram.client import bot
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
@@ -34,21 +34,21 @@ async def command_start_handler(message: Message) -> None:
 
 
 @dp.message(Command("cat"))
-async def cmd_cat(msg: types.Message) -> Message:
+async def cmd_cat(msg: Message) -> None:
     res = msg.text[5:]
     if res:
-        return await msg.bot.send_message(msg.chat.id, res)
+        await msg.bot.send_message(msg.chat.id, res)
 
 
 @dp.message(Command("coin"))
-async def cmd_coin(msg: types.Message) -> Message:
-    return await msg.reply(emoji.emojize(f"You get a "
-                                         f"{['Head! :full_moon_with_face:', 'Tail! :new_moon_with_face:']
-                                         [random.randint(0, 1)]}", language='alias'))
+async def cmd_coin(msg: Message) -> None:
+    await msg.reply(emoji.emojize(f"You get a "
+                                  f"{['Head! :full_moon_with_face:', 'Tail! :new_moon_with_face:']
+                                  [random.randint(0, 1)]}", language='alias'))
 
 
 @dp.message(Command("crypto"))
-async def cmd_crypto(msg: types.Message) -> None:
+async def cmd_crypto(msg: Message) -> None:
     answer = await msg.reply('Please wait...')
     res = "*Popular cryptocurrencies*\n"
     crypto = open("tg_bot/data/crypto.json", "r").read().json()
@@ -77,7 +77,7 @@ def RoundTo(num, digits=2):
 
 
 @dp.message(Command("dice"))
-async def cmd_dice(msg: types.Message) -> None:
+async def cmd_dice(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
@@ -112,7 +112,7 @@ async def cmd_dice(msg: types.Message) -> None:
 
 
 @dp.message(Command("8ball"))
-async def cmd_8ball(msg: types.Message) -> None:
+async def cmd_8ball(msg: Message) -> None:
     await msg.reply(random.choice(["Without a doubt.",
                                    "As I see it yes.",
                                    "Outlook not so good.",
@@ -129,7 +129,7 @@ note = {}
 
 
 @dp.message(Command("note"))
-async def cmd_note(msg: types.Message) -> None:
+async def cmd_note(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
@@ -181,7 +181,7 @@ async def cmd_note(msg: types.Message) -> None:
 
 
 @dp.message(Command("pussy"))
-async def cmd_pussy(msg: types.Message) -> None:
+async def cmd_pussy(msg: Message) -> None:
     if requests.get("https://cataas.com").status_code != 200:
         await msg.reply(emoji.emojize("Something went wrong, we'll be fix this! :crying_cat_face:", language="alias"))
         return
@@ -234,13 +234,11 @@ async def cmd_pussy(msg: types.Message) -> None:
 
 
 @dp.message(Command("random"))
-async def cmd_random(msg: types.Message) -> None:
+async def cmd_random(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
         await msg.reply("Usage: /random <start> <end>")
-        return
-
     try:
         start = int(arg[0])
         if len(arg) == 1:
@@ -262,7 +260,7 @@ async def cmd_random(msg: types.Message) -> None:
 
 
 @dp.message(Command("remind"))
-async def cmd_remind(msg: types.Message) -> None:
+async def cmd_remind(msg: Message) -> None:
     global arg_time
     arg = msg.text.split()[1:]
 
@@ -309,7 +307,7 @@ async def cmd_remind(msg: types.Message) -> None:
 
 
 @dp.message(Command("repeat"))
-async def cmd_repeat(msg: types.Message) -> None:
+async def cmd_repeat(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
@@ -332,18 +330,20 @@ async def cmd_repeat(msg: types.Message) -> None:
 
 
 @dp.message(Command("rgb"))
-async def cmd_rgb(msg: types.Message) -> Message | None:
+async def cmd_rgb(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
-        return await msg.reply("Usage: /rgb <r> <g> <b>")
+        await msg.reply("Usage: /rgb <r> <g> <b>")
+        return
 
     r = int(arg[0])
     g = int(arg[1])
     b = int(arg[2])
 
     if 0 < r > 255 or 0 < g > 255 or 0 < b > 255:
-        return await msg.reply("")
+        await msg.reply("")
+        return
 
     try:
         file_name = int(time())
@@ -362,7 +362,7 @@ async def cmd_rgb(msg: types.Message) -> Message | None:
                          parse_mode="Markdown")
 
     os.remove(f"tg_bot/cache/{file_name}.png")
-    return file.close()
+    file.close()
 
 
 def rgb2hex(r: int, g: int, b: int):
@@ -415,7 +415,7 @@ start_time = time()
 
 
 @dp.message(Command("sysfetch"))
-async def cmd_sysfetch(msg: types.Message) -> None:
+async def cmd_sysfetch(msg: Message) -> None:
     up_time = getReadableTime(round(time() - start_time))
     await msg.reply(
         f"<b>{' System Information ':─^30}</b>"
@@ -448,11 +448,12 @@ translator = Translator()
 
 
 @dp.message(Command("translate"))
-async def cmd_translate(msg: types.Message) -> Message:
+async def cmd_translate(msg: Message) -> None:
     args = msg.text.split()
 
     if len(args) <= 1:
-        return await msg.reply("Usage: /translate <language> <message>\nOn reply: /translate <language>")
+        await msg.reply("Usage: /translate <language> <message>\nOn reply: /translate <language>")
+        return
 
     lang = args[1]
 
@@ -463,6 +464,7 @@ async def cmd_translate(msg: types.Message) -> Message:
     elif msg.reply_to_message.text:
         message = msg.reply_to_message.text
     else:
-        return await msg.reply("No message")
+        await msg.reply("No message")
+        return
 
-    return await msg.reply(translator.translate(message, lang).result)
+    await msg.reply(translator.translate(message, lang).result)
