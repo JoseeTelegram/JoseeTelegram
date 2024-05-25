@@ -4,19 +4,19 @@
 
 ## Commands
 
-- ``8ball`` - Experiences your future with a magic ball
-- ``cat`` - Repeats your message
-- ``coin`` - Flips a coin
-- ``dice`` - Throws the dice
-- ``crypto`` - Displays the value of the most popular cryptocurrencies
-- ``note`` - Allows to use notes in telegram
-- ``pussy`` - Did you really want to see that?
-- ``random`` - Returns a random number from one to argument
-- ``remind`` - Reminds you of your message from the past
-- ``repeat`` - Repeats the message
-- ``rgb`` - Displays RGB to image and HEX
-- ``sysfetch`` - Gets system information
-- ``translate`` - Translates the message into another language
+* ``8ball`` - Experiences your future with a magic ball
+* ``echo`` - Repeats your message
+* ``coin`` - Flips a coin
+* ``dice`` - Throws the dice
+* ``crypto`` - Displays the value of the most popular cryptocurrencies
+* ``note`` - Allows to use notes in telegram
+* ``pussy`` - Did you really want to see that?
+* ``random`` - Returns a random number from one to argument
+* ``remind`` - Reminds you of your message from the past
+* ``repeat`` - Repeats the message
+* ``rgb`` - Displays RGB to image and HEX
+* ``sysfetch`` - Gets system information
+* ``translate`` - Translates the message into another language
 
 ## Try it
 

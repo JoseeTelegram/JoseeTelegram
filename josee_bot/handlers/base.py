@@ -33,8 +33,8 @@ async def command_start_handler(message: Message) -> None:
     await message.answer(f"Hello, {html.bold(message.from_user.full_name)}!")
 
 
-@dp.message(Command("cat"))
-async def cmd_cat(msg: Message) -> None:
+@dp.message(Command("echo"))
+async def cmd_echo(msg: Message) -> None:
     res = msg.text[5:]
     if res:
         await msg.bot.send_message(msg.chat.id, res)
