@@ -4,8 +4,6 @@ import logging
 
 import requests
 
-from settings import crypto_update
-
 logger = logging.getLogger(__name__)
 
 while True:

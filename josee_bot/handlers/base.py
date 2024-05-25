@@ -1,11 +1,8 @@
 import asyncio
-import logging
 import math
 import os
 import platform
 import random
-import sys
-from os import getenv
 from time import ctime
 from time import time
 
@@ -13,19 +10,14 @@ import emoji
 import psutil
 import requests
 from PIL import Image as IMG
-from aiogram import Bot, Dispatcher, html, types
+from aiogram import Bot, html, types
 from aiogram.client import bot
-from aiogram.client.default import DefaultBotProperties
-from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message
+from loguru import logger
 from translatepy import Translator
 
-# Bot token can be obtained via https://t.me/BotFather
-TOKEN = getenv("BOT_TOKEN")
-
-# All handlers should be attached to the Router (or Dispatcher)
-dp = Dispatcher()
+from josee_bot.misc import dp
 
 
 @dp.message(CommandStart())
@@ -271,6 +263,7 @@ async def cmd_random(msg: types.Message) -> None:
 
 @dp.message(Command("remind"))
 async def cmd_remind(msg: types.Message) -> None:
+    global arg_time
     arg = msg.text.split()[1:]
 
     if not arg:
@@ -306,8 +299,8 @@ async def cmd_remind(msg: types.Message) -> None:
 
     if msg.chat.type == "supergroup":
         await Bot.send_message(msg.from_user.id,
-                                  f'Remind from <u><a href="https://t.me/{msg.chat.username}">{msg.chat.title}</a></u>.{message}',
-                                  parse_mode="HTML")
+                               f'Remind from <u><a href="https://t.me/{msg.chat.username}">{msg.chat.title}</a></u>.{message}',
+                               parse_mode="HTML")
         await msg.answer(f"@{msg.from_user.username}\nRemind at {ctime(time() - arg_time)}.{message}")
         return
 
@@ -336,13 +329,6 @@ async def cmd_repeat(msg: types.Message) -> None:
     for _ in range(count):
         await bot.Bot.send_message(msg.chat.id, ' '.join(arg[1:]))
     return
-
-
-async def main() -> None:
-    # Initialize Bot instance with default bot properties which will be passed to all API calls
-    bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    # And the run events dispatching
-    await dp.start_polling(bot)
 
 
 @dp.message(Command("rgb"))
@@ -428,6 +414,7 @@ def rgb2cmyk(r: int, g: int, b: int):
 start_time = time()
 
 
+@dp.message(Command("sysfetch"))
 async def cmd_sysfetch(msg: types.Message) -> None:
     up_time = getReadableTime(round(time() - start_time))
     await msg.reply(
@@ -460,6 +447,7 @@ def getReadableTime(seconds: int):
 translator = Translator()
 
 
+@dp.message(Command("translate"))
 async def cmd_translate(msg: types.Message) -> Message:
     args = msg.text.split()
 
@@ -468,7 +456,7 @@ async def cmd_translate(msg: types.Message) -> Message:
 
     lang = args[1]
 
-    logging.info(len(args))
+    logger.info(len(args))
 
     if len(args) > 2:
         message = ' '.join(args[2:])
@@ -478,8 +466,3 @@ async def cmd_translate(msg: types.Message) -> Message:
         return await msg.reply("No message")
 
     return await msg.reply(translator.translate(message, lang).result)
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
-    asyncio.run(main())
