@@ -112,7 +112,7 @@ async def cmd_dice(msg: Message) -> None:
 
 @dp.message(Command("8ball"))
 async def cmd_8ball(msg: Message) -> None:
-    await msg.reply(random.choice(EIGHT_BALL))
+    await msg.reply(emoji.emojize(f":8ball: {random.choice(EIGHT_BALL)}", language="alias"))
 
 
 note = {}
