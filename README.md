@@ -4,6 +4,8 @@
 
 ## Commands
 
+List of available bot commands, you can also copy and paste them into your bot via [@BotFather](https://t.me/BotFather).
+
 * ``8ball`` - Experiences your future with a magic ball
 * ``echo`` - Repeats your message
 * ``coin`` - Flips a coin
