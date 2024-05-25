@@ -419,8 +419,6 @@ async def cmd_translate(msg: Message) -> None:
 
     lang = args[1]
 
-    logger.info(len(args))
-
     if len(args) > 2:
         message = ' '.join(args[2:])
     elif msg.reply_to_message.text:
