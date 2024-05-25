@@ -145,6 +145,7 @@ async def cmd_note(msg: Message) -> None:
         if len(arg) == 1:
             await msg.reply("Nothing to note here...")
             return
+
         note[str(msg.chat.id)].append(" ".join(arg[1:]))
         await msg.reply("Note succesfully created.")
 
@@ -152,9 +153,12 @@ async def cmd_note(msg: Message) -> None:
         if not note[str(msg.chat.id)]:
             await msg.reply("You have no notes, to create new: /note add <note>")
             return
+
         answer = "*Note List*\n"
+
         for i in range(0, len(note[str(msg.chat.id)])):
             answer += f"{i + 1}. {note[str(msg.chat.id)][i]}\n"
+
         await msg.reply(answer, parse_mode='Markdown')
 
     elif arg[0] == "delete":
@@ -185,6 +189,7 @@ async def cmd_pussy(msg: Message) -> None:
 
     if not arg:
         req = requests.get('https://cataas.com/c')
+
         if random.random() <= 0.25:
             res += " <span class=\"tg-spoiler\">Also try \"pussy help\"!</span>"
     else:
@@ -237,10 +242,13 @@ async def cmd_random(msg: Message) -> None:
 
     try:
         start = int(arg[0])
+
         if len(arg) == 1:
             await msg.reply(str(random.randrange(0, start)))
             return
+
         end = int(arg[1])
+
         if start < end:
             await msg.reply(str(random.randrange(start, end)))
         elif start == end:
@@ -266,9 +274,11 @@ async def cmd_remind(msg: Message) -> None:
         if not arg[0][0].isdigit():
             await msg.reply("Argument doesn't contain a number.")
             return
+
         for sym in range(0, len(arg[0])):
             if not arg[0][sym].isdigit():
                 arg_time = int(arg[0][:sym])
+
                 if arg[0][sym:] in ["sec", "s"]:
                     pass
                 elif arg[0][sym:] in ["min", "m"]:
@@ -284,6 +294,7 @@ async def cmd_remind(msg: Message) -> None:
     await asyncio.sleep(arg_time)
 
     message = ""
+
     if len(arg) > 1:
         message = f"\nMessage: \"{' '.join(arg[1:])}\""
 
@@ -374,6 +385,7 @@ def rgb2hsv(r: int, g: int, b: int):
     diff = M - m
 
     h = -1
+
     if M == m:
         h = 0
     elif M == r:
@@ -384,6 +396,7 @@ def rgb2hsv(r: int, g: int, b: int):
         h = (60 * ((r - g) / diff) + 240) % 360
 
     s = 0
+
     if M != 0:
         s = (diff / M) * 100
 
@@ -408,6 +421,7 @@ start_time = time()
 @dp.message(Command("sysfetch"))
 async def cmd_sysfetch(msg: Message) -> None:
     up_time = getReadableTime(round(time() - start_time))
+
     await msg.reply(
         f"<b>{' System Information ':─^30}</b>"
         f"\n<b>Platform:</b> {platform.system()} {platform.release()}"
@@ -418,6 +432,7 @@ async def cmd_sysfetch(msg: Message) -> None:
         f"\n<b>IP:</b> {requests.get('http://icanhazip.com').text.rstrip()}"
         f"\n<b>{' System Information ':─^30}</b>"
         , 'HTML')
+
     return
 
 
