@@ -147,7 +147,6 @@ async def cmd_note(msg: Message) -> None:
             return
         note[str(msg.chat.id)].append(" ".join(arg[1:]))
         await msg.reply("Note succesfully created.")
-        return
 
     elif arg[0] == "list":
         if not note[str(msg.chat.id)]:
@@ -157,7 +156,6 @@ async def cmd_note(msg: Message) -> None:
         for i in range(0, len(note[str(msg.chat.id)])):
             answer += f"{i + 1}. {note[str(msg.chat.id)][i]}\n"
         await msg.reply(answer, parse_mode='Markdown')
-        return
 
     elif arg[0] == "delete":
         if arg[1].isdigit():
@@ -166,18 +164,14 @@ async def cmd_note(msg: Message) -> None:
                 return
             del note[str(msg.chat.id)][int(arg[1]) - 1]
             await msg.reply("Note succesfully deleted.")
-            return
         elif arg[1] == "all":
             note[str(msg.chat.id)].clear()
             await msg.reply("All notes was deleted.")
-            return
         else:
             await msg.reply("Usage: /note delete <number/\"all\">", parse_mode="markdown")
-            return
 
     else:
         await msg.reply("Usage: /note <add/list/delete> <note>", parse_mode="markdown")
-        return
 
 
 @dp.message(Command("pussy"))
@@ -239,6 +233,8 @@ async def cmd_random(msg: Message) -> None:
 
     if not arg:
         await msg.reply("Usage: /random <start> <end>", parse_mode="markdown")
+        return
+
     try:
         start = int(arg[0])
         if len(arg) == 1:
@@ -247,16 +243,12 @@ async def cmd_random(msg: Message) -> None:
         end = int(arg[1])
         if start < end:
             await msg.reply(str(random.randrange(start, end)))
-            return
         elif start == end:
             await msg.reply("Both integers are the same.")
-            return
         else:
             await msg.reply(str(random.randrange(end, start)))
-            return
     except ValueError:
         await msg.reply(f"One of the arguments isn\'t an integer.")
-        return
 
 
 @dp.message(Command("remind"))
@@ -326,7 +318,6 @@ async def cmd_repeat(msg: Message) -> None:
 
     for _ in range(count):
         await msg.answer(' '.join(arg[1:]))
-    return
 
 
 @dp.message(Command("rgb"))
@@ -452,7 +443,8 @@ async def cmd_translate(msg: Message) -> None:
     args = msg.text.split()
 
     if len(args) <= 1:
-        await msg.reply("Usage: /translate <language> <message>\nOn reply: /translate <language>", parse_mode="markdown")
+        await msg.reply("Usage: /translate <language> <message>\nOn reply: /translate <language>",
+                        parse_mode="markdown")
         return
 
     lang = args[1]
