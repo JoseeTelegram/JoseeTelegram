@@ -1,8 +1,7 @@
 import asyncio
-import math
-import os
 import platform
 import random
+from io import BytesIO
 from time import ctime
 from time import time
 
@@ -11,9 +10,8 @@ import psutil
 import requests
 from PIL import Image as IMG
 from aiogram import Bot, html
-from aiogram.client import bot
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message, URLInputFile
+from aiogram.types import Message, URLInputFile, BufferedInputFile
 from loguru import logger
 from translatepy import Translator
 
@@ -297,10 +295,11 @@ async def cmd_repeat(msg: Message) -> None:
 
 @dp.message(Command("rgb"))
 async def cmd_rgb(msg: Message) -> None:
+    usage = "Usage: /rgb <r> <g> <b>"
     arg = msg.text.split()[1:]
 
     if not arg:
-        await msg.reply("Usage: /rgb <r> <g> <b>", parse_mode="markdown")
+        await msg.reply(usage, parse_mode="markdown")
         return
 
     r = int(arg[0])
@@ -308,27 +307,19 @@ async def cmd_rgb(msg: Message) -> None:
     b = int(arg[2])
 
     if 0 < r > 255 or 0 < g > 255 or 0 < b > 255:
-        await msg.reply("")
+        await msg.reply(usage, parse_mode="markdown")
         return
 
-    try:
-        file_name = int(time())
-        IMG.new("RGB", (128, 128), (r, g, b)).save(f"tg_bot/cache/{file_name}.png", bitmap_format="png")
-        file = open(f"tg_bot/cache/{file_name}.png", "rb")
-    except Exception as e:
-        print(e)
-        await msg.reply("Usage: /rgb <r> <g> <b>", parse_mode="markdown")
-        return
+    buffer = BytesIO()
+    IMG.new("RGB", (128, 128), (r, g, b)).save(buffer, format="PNG")
+    buffer.seek(0)
 
-    await bot.send_photo(msg.chat.id, file,
-                         f"*RGB:* {r}, {g}, {b}\n"
-                         f"*HEX:* #{''.join(str(i) for i in rgb2hex(r, g, b))}\n"
-                         f"*HSV:* {', '.join(str(round(i)) for i in rgb2hsv(r, g, b))}\n"
-                         f"*CMYK:* {', '.join(str(round(i)) for i in rgb2cmyk(r, g, b))}\n",
-                         parse_mode="Markdown")
-
-    os.remove(f"tg_bot/cache/{file_name}.png")
-    file.close()
+    await msg.reply_photo(photo=BufferedInputFile(buffer.read(), filename="color.png"),
+                          caption=f"*RGB:* {r}, {g}, {b}\n"
+                                  f"*HEX:* #{''.join(str(i) for i in rgb2hex(r, g, b))}\n"
+                                  f"*HSV:* {', '.join(str(round(i)) for i in rgb2hsv(r, g, b))}\n"
+                                  f"*CMYK:* {', '.join(str(round(i)) for i in rgb2cmyk(r, g, b))}\n",
+                          parse_mode="Markdown")
 
 
 def rgb2hex(r: int, g: int, b: int):
