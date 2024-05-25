@@ -308,7 +308,7 @@ async def cmd_repeat(msg: Message) -> None:
 
     try:
         count = int(arg[0])
-    except:
+    except ValueError:
         await msg.reply("Argument isn't number.")
         return
 
