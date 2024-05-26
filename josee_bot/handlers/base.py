@@ -12,7 +12,6 @@ from PIL import Image as IMG
 from aiogram import Bot, html
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, URLInputFile, BufferedInputFile
-from loguru import logger
 from translatepy import Translator
 
 from josee_bot import EIGHT_BALL, CRYPTO
