@@ -9,7 +9,7 @@ import emoji
 import psutil
 import requests
 from PIL import Image as IMG
-from aiogram import Bot, html
+from aiogram import html
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, URLInputFile, BufferedInputFile
 from translatepy import Translator
@@ -260,9 +260,6 @@ async def cmd_remind(msg: Message) -> None:
         message = f"\nMessage: \"{' '.join(arg[1:])}\""
 
     if msg.chat.type == "supergroup":
-        await Bot.send_message(msg.from_user.id,
-                               f'Remind from <u><a href="https://t.me/{msg.chat.username}">{msg.chat.title}</a></u>.{message}',
-                               parse_mode="HTML")
         await msg.answer(f"@{msg.from_user.username}\nRemind at {ctime(time() - arg_time)}.{message}")
         return
 
