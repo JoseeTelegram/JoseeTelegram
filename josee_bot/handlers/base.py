@@ -11,7 +11,7 @@ import requests
 from PIL import Image as IMG
 from aiogram import html
 from aiogram.filters import CommandStart, Command
-from aiogram.types import Message, URLInputFile, BufferedInputFile
+from aiogram.types import Message, URLInputFile, BufferedInputFile, ReactionTypeEmoji
 from translatepy import Translator
 
 from josee_bot import EIGHT_BALL, CRYPTO
@@ -222,49 +222,24 @@ async def cmd_random(msg: Message) -> None:
 
 @dp.message(Command("remind"))
 async def cmd_remind(msg: Message) -> None:
-    global arg_time
+    usage="Usage: /remind <seconds> <message>"
     arg = msg.text.split()[1:]
 
-    if not arg:
-        await msg.reply("Usage: /remind <time> <message>", parse_mode="markdown")
+    if not arg or not arg[0].isdigit():
+        await msg.reply(usage, parse_mode="markdown")
         return
 
-    if arg[0].isdigit():
-        arg_time = int(arg[0])
-    else:
-        if not arg[0][0].isdigit():
-            await msg.reply("Argument doesn't contain a number.")
-            return
+    arg_time = int(arg[0])
 
-        for sym in range(0, len(arg[0])):
-            if not arg[0][sym].isdigit():
-                arg_time = int(arg[0][:sym])
-
-                if arg[0][sym:] in ["sec", "s"]:
-                    pass
-                elif arg[0][sym:] in ["min", "m"]:
-                    arg_time *= 60
-                elif arg[0][sym:] in ["hour", "h"]:
-                    arg_time *= 3600
-                else:
-                    await msg.reply(f"Argument is not entered in format. Example: 10sec/30min/1hour or 10s/30m/1h.")
-                    return
-                break
-
-    await msg.reply(f"Ugh... fine, I'll remind you in {arg_time} sec.")
+    await msg.react(reaction=[ReactionTypeEmoji(emoji=emoji.emojize(":ok_hand:", language="alias"))])
     await asyncio.sleep(arg_time)
 
-    message = ""
+    message = f"Remind at {ctime(time() - arg_time)}"
 
-    if len(arg) > 1:
-        message = f"\nMessage: \"{' '.join(arg[1:])}\""
+    if msg.chat.type in ["group", "supergroup"]:
+        message = message + f"@{msg.from_user.username}"
 
-    if msg.chat.type == "supergroup":
-        await msg.answer(f"@{msg.from_user.username}\nRemind at {ctime(time() - arg_time)}.{message}")
-        return
-
-    await msg.answer(f"Remind at {ctime(time() - arg_time)}.{message}")
-    return
+    await msg.reply(message)
 
 
 @dp.message(Command("repeat"))
