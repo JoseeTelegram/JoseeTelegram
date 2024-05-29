@@ -347,16 +347,16 @@ start_time = time()
 
 @dp.message(Command("sysfetch"))
 async def cmd_sysfetch(msg: Message) -> None:
+    memory = psutil.virtual_memory()
     await msg.reply(
-        f"<b>{' System Information ':─^30}</b>"
-        f"\n<b>Platform:</b> {platform.system()} {platform.release()}"
-        f"\n<b>Architecture:</b> {platform.machine()}"
         f"\n<b>Uptime:</b> {humanize.naturaldelta(time() - start_time)}"
-        f"\n<b>CPU:</b> {round(psutil.cpu_freq()[0])}/{round(psutil.cpu_freq()[2])} GHz ({round(psutil.cpu_percent())}%)"
-        f"\n<b>RAM:</b> {round(psutil.virtual_memory().used / 1024 ** 2)}/{round(psutil.virtual_memory().total / 1024 ** 2)} MB ({round(psutil.virtual_memory().percent)}%)"
-        f"\n<b>IP:</b> {requests.get('http://icanhazip.com').text.rstrip()}"
-        f"\n<b>{' System Information ':─^30}</b>"
-        , 'HTML')
+        f"\n<b>Kernel:</b> {platform.system()} {platform.release()} {platform.machine()}"
+        f"\n<b>OS:</b> {platform.system()}"
+        f"\n<b>CPU:</b> {platform.processor()}"
+        f"\n<b>RAM:</b> {round(memory.used / 1024 ** 2)}/{round(memory.total / 1024 ** 2)} ({round(memory.percent)}%)"
+        f"\n<b>Load:</b> {round(psutil.cpu_percent())}%"
+        f"\n<b>Distro:</b> {platform.freedesktop_os_release()["PRETTY_NAME"]}",
+        'HTML')
 
 
 translator = Translator()
