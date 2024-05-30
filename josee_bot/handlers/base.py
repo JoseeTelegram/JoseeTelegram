@@ -11,8 +11,9 @@ import psutil
 import requests
 from PIL import Image as IMG
 from aiogram import html
-from aiogram.filters import CommandStart, Command
+from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.types import Message, URLInputFile, BufferedInputFile, ReactionTypeEmoji
+from dice import roll, DiceBaseException
 from translatepy import Translator
 
 from josee_bot import EIGHT_BALL, CRYPTO
@@ -74,38 +75,23 @@ def filter_crypto_rate(crypto_rates: list, name: str) -> dict | None:
 
 
 @dp.message(Command("roll"))
-async def cmd_roll(msg: Message) -> None:
-    arg = msg.text.split()[1:]
+async def cmd_roll(msg: Message, command: CommandObject) -> None:
+    arg = command.args
 
     if not arg:
-        await msg.reply("Usage: /roll <edges> <number>", parse_mode="markdown")
+        await msg.reply("Usage: /roll <dice>\n"
+                        "Read the [documentation](https://github.com/borntyping/python-dice/blob/main/README.md) "
+                        "before using this command.",
+                        parse_mode="markdown", disable_web_page_preview=True)
         return
-
-    nDice = 1
 
     try:
-        nSides = int(arg[0])
+        result = emoji.emojize(f":game_die: {msg.from_user.username} rolled {', '.join(map(str, [roll(arg)]))}",
+                               language="alias")
+    except DiceBaseException as e:
+        result = e.pretty_print()
 
-        if len(arg) > 1:
-            nDice = int(arg[1])
-    except ValueError:
-        await msg.reply(f"One of the arguments isn\'t an integer.")
-        return
-
-    if nDice < 1:
-        nDice = 1
-
-    if nSides < 2:
-        nSides = 2
-
-    nTotal = 0
-
-    for x in range(0, nDice):
-        nTotal += random.randint(1, nSides)
-
-    await msg.reply(
-        emoji.emojize(f":game_die: {msg.from_user.username} rolled {nDice}d{nSides} and got {nTotal}",
-                      language="alias"))
+    await msg.reply(result, parse_mode="markdown")
 
 
 @dp.message(Command("8ball"))
@@ -223,7 +209,7 @@ async def cmd_random(msg: Message) -> None:
 
 @dp.message(Command("remind"))
 async def cmd_remind(msg: Message) -> None:
-    usage="Usage: /remind <seconds> <message>"
+    usage = "Usage: /remind <seconds> <message>"
     arg = msg.text.split()[1:]
 
     if not arg or not arg[0].isdigit():
