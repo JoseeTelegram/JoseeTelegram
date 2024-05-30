@@ -10,7 +10,7 @@ List of available bot commands, you can also copy and paste them into your bot v
 8ball - Experiences your future with a magic ball
 echo - Repeats your message
 coin - Flips a coin
-dice - Throws the dice
+roll - Makes a dice roll
 crypto - Displays the value of the most popular cryptocurrencies
 note - Allows to use notes in telegram
 cat - Sends a random cat picture

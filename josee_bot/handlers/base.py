@@ -73,12 +73,12 @@ def filter_crypto_rate(crypto_rates: list, name: str) -> dict | None:
             return crypto_rate
 
 
-@dp.message(Command("dice"))
-async def cmd_dice(msg: Message) -> None:
+@dp.message(Command("roll"))
+async def cmd_roll(msg: Message) -> None:
     arg = msg.text.split()[1:]
 
     if not arg:
-        await msg.reply("Usage: /dice <edges> <number>", parse_mode="markdown")
+        await msg.reply("Usage: /roll <edges> <number>", parse_mode="markdown")
         return
 
     nDice = 1
