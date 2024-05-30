@@ -34,10 +34,14 @@ async def command_start_handler(message: Message) -> None:
 
 
 @dp.message(Command("echo"))
-async def cmd_echo(msg: Message) -> None:
-    res = msg.text[5:]
-    if res:
-        await msg.bot.send_message(msg.chat.id, res)
+async def cmd_echo(msg: Message, command: CommandObject) -> None:
+    arg = command.args
+
+    if not arg:
+        await msg.reply("Usage: /echo <string>", parse_mode="markdown")
+        return
+
+    await msg.reply(arg)
 
 
 @dp.message(Command("coin"))
