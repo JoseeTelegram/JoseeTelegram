@@ -46,9 +46,10 @@ async def cmd_echo(msg: Message, command: CommandObject) -> None:
 
 @dp.message(Command("coin"))
 async def cmd_coin(msg: Message) -> None:
-    await msg.reply(emoji.emojize(f"You get a "
-                                  f"{['Head! :full_moon_with_face:', 'Tail! :new_moon_with_face:']
-                                  [random.randint(0, 1)]}", language='alias'))
+    await msg.reply(
+        emoji.emojize("You get a "
+                      f"{['Head! :full_moon_with_face:', 'Tail! :new_moon_with_face:'][random.randint(0, 1)]}",
+                      language='alias'))
 
 
 @dp.message(Command("crypto"))
@@ -345,7 +346,7 @@ async def cmd_sysfetch(msg: Message) -> None:
         f"\n<b>CPU:</b> {platform.processor()}"
         f"\n<b>RAM:</b> {round(memory.used / 1024 ** 2)}/{round(memory.total / 1024 ** 2)} ({round(memory.percent)}%)"
         f"\n<b>Load:</b> {round(psutil.cpu_percent())}%"
-        f"\n<b>Distro:</b> {platform.freedesktop_os_release()["PRETTY_NAME"]}",
+        f"\n<b>Distro:</b> {platform.freedesktop_os_release()['PRETTY_NAME']}",
         'HTML')
 
 
