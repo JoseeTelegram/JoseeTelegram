@@ -408,6 +408,9 @@ async def cmd_shazam(msg: Message) -> None:
 
 
 async def search_music(msg: Message) -> str | None:
+    if not msg:
+        return None
+
     file_id = None
 
     if msg.audio:
