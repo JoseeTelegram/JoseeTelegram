@@ -10,6 +10,7 @@ import humanize
 import psutil
 import requests
 from PIL import Image as IMG
+from ShazamAPI import Shazam
 from aiogram import html
 from aiogram.filters import CommandStart, Command, CommandObject
 from aiogram.types import Message, URLInputFile, BufferedInputFile, ReactionTypeEmoji
@@ -17,7 +18,7 @@ from dice import roll, DiceBaseException
 from translatepy import Translator
 
 from josee_bot import EIGHT_BALL, CRYPTO
-from josee_bot.misc import dp
+from josee_bot.misc import dp, bot
 
 
 @dp.message(CommandStart())
@@ -373,3 +374,47 @@ async def cmd_translate(msg: Message) -> None:
         return
 
     await msg.reply(translator.translate(message, lang).result)
+
+
+@dp.message(Command("shazam"))
+async def cmd_shazam(msg: Message) -> None:
+    music = await search_music(msg)
+
+    if not music:
+        music = await search_music(msg.reply_to_message)
+
+        if not music:
+            await msg.reply("Attach to command any media file (audio, video) to get result.")
+            return
+
+    file = await bot.download(file=music)
+    shazam = Shazam(file.read())
+    recognize_generator = shazam.recognizeSong()
+    data = next(recognize_generator)[1]
+
+    if not data['matches']:
+        await msg.reply(emoji.emojize(":mute: No music match found.", language="alias"))
+        return
+
+    track = data['track']
+
+    await msg.reply_photo(
+        photo=URLInputFile(track['images']['coverart']),
+        caption=emoji.emojize(":speaker: Music match found!\n"
+                              f"Title: {track['title']}\n"
+                              f"Subtitle: {track['subtitle']}",
+                              language="alias")
+    )
+
+
+async def search_music(msg: Message) -> str | None:
+    file_id = None
+
+    if msg.audio:
+        file_id = msg.audio.file_id
+    elif msg.video:
+        file_id = msg.video.file_id
+    elif msg.voice:
+        file_id = msg.voice.file_id
+
+    return file_id

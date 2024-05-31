@@ -20,6 +20,7 @@ repeat - Repeats the message
 rgb - Displays RGB to image and HEX
 sysfetch - Gets system information
 translate - Translates the message into another language
+shazam - Recognizes music
 ```
 
 ## Try it
