@@ -1,6 +1,15 @@
 # JoseeTelegram
 
-Telegram Bot
+JoseeTelegram is an open-source asynchronous Telegram bot for communication with useful and entertaining commands, aiming for anonymity.
+
+## Description (tl;dr)
+
+Full bot description:
+* The bot is JoseeTelegram: the bot is named after a character Josee Yamamura from [Josee, the Tiger and the Fish](https://en.wikipedia.org/wiki/Josee%2C_the_Tiger_and_the_Fish_(2020_film)), don't ask why.
+* The bot is open-source: the bot's code is written under the MIT license, which means that you can freely use and edit any part of the code as you wish.
+* The bot is asynchronous: the bot is written in [aiogram](https://github.com/aiogram/aiogram), a modern and asynchronous framework Telegram bots in Python.
+* The bot is command-driven: the bot works only through commands, using arguments to pass data or using a command as a reply to another message.
+* The bot is anonymous: the bot does not store, edit or analyze information about chats, users or messages.
 
 ## Commands
 
