@@ -21,7 +21,6 @@ echo - Repeats your message
 coin - Flips a coin
 roll - Makes a dice roll
 crypto - Displays the value of the most popular cryptocurrencies
-note - Allows to use notes in telegram
 cat - Sends a random cat picture
 random - Returns a random number from one to argument
 remind - Reminds you of your message from the past
